@@ -1,0 +1,19 @@
+import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
+import 'package:product_searcher/features/auth/domain/repositories/auth_repository.dart';
+
+/// Use case for retrieving the currently authenticated user.
+///
+/// Returns the current [UserEntity] if a user is signed in,
+/// or `null` if no user is authenticated. This is a synchronous operation.
+class GetCurrentUserUseCase {
+  /// The authentication repository.
+  final AuthRepository _repository;
+
+  /// Creates a [GetCurrentUserUseCase] with the given [repository].
+  GetCurrentUserUseCase(AuthRepository repository) : _repository = repository;
+
+  /// Returns the current [UserEntity] or `null`.
+  UserEntity? call() {
+    return _repository.getCurrentUser();
+  }
+}
