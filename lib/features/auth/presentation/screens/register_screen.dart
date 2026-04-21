@@ -65,13 +65,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return null;
   }
 
-  /// Valida que la contraseña tenga al menos 6 caracteres.
+  /// Valida que la contraseña cumpla los requisitos de seguridad:
+  /// mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'La contraseña es obligatoria';
     }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+    if (value.length < 8) {
+      return 'Mínimo 8 caracteres';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Debe contener al menos una mayúscula';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Debe contener al menos un número';
+    }
+    if (!RegExp(r"[!@#$%^&*()\-_=+\[\]{};:,.<>?/\\|~]").hasMatch(value)) {
+      return 'Debe contener al menos un carácter especial';
     }
     return null;
   }

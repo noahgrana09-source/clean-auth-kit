@@ -22,12 +22,12 @@ import '../error/failures.dart';
 ///   }
 /// }
 /// ```
-abstract class UseCase<Type, Params> {
+abstract class UseCase<T, Params> {
   /// Ejecuta el caso de uso con los [params] dados.
   ///
   /// Retorna [Right] con el resultado si la operación fue exitosa,
   /// o [Left] con un [Failure] descriptivo si falló.
-  Future<Either<Failure, Type>> call(Params params);
+  Future<Either<Failure, T>> call(Params params);
 }
 
 /// Contrato base para casos de uso que retornan un [Stream].
@@ -41,9 +41,9 @@ abstract class UseCase<Type, Params> {
 ///   Stream<UserEntity?> call(NoParams params) => _repository.watchAuthState();
 /// }
 /// ```
-abstract class StreamUseCase<Type, Params> {
-  /// Retorna un [Stream] del tipo [Type] en función de [params].
-  Stream<Type> call(Params params);
+abstract class StreamUseCase<T, Params> {
+  /// Retorna un [Stream] del tipo [T] en función de [params].
+  Stream<T> call(Params params);
 }
 
 /// Parámetros vacíos para casos de uso que no requieren entrada.

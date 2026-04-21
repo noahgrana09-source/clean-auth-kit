@@ -27,7 +27,7 @@ abstract final class AppTextStyles {
 
   // ── Headline ─────────────────────────────────────────────────────────────
 
-  /// Titular principal de pantallas de auth.
+  /// Titular principal.
   static const TextStyle headlineLarge = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w700,

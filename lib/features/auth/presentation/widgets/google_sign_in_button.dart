@@ -1,196 +1,75 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/utils/platform_utils.dart';
+// SVG oficial del logo Google G, embebido como string para evitar assets externos.
+const String _kGoogleLogoSvg = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+</svg>
+''';
 
-/// Botón adaptativo para iniciar sesión con Google.
+/// Botón de "Continuar con Google" con el logo oficial de Google.
 ///
-/// Muestra el logo de Google junto al texto "Continuar con Google".
-/// Renderiza como [CupertinoButton] en iOS y [OutlinedButton] en Material.
-/// Incluye soporte para estado de carga.
+/// Sigue las Google Sign-In branding guidelines: fondo blanco en tema claro,
+/// fondo oscuro en tema oscuro, logo G a la izquierda, texto centrado.
 class GoogleSignInButton extends StatelessWidget {
-  /// Callback al presionar el botón.
   final VoidCallback? onPressed;
-
-  /// Si `true`, muestra un indicador de carga.
   final bool isLoading;
 
-  /// Crea un [GoogleSignInButton] adaptativo.
   const GoogleSignInButton({super.key, this.onPressed, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
-    if (PlatformUtils.isCupertino) {
-      return _buildCupertinoButton(context);
-    }
-    return _buildMaterialButton(context);
-  }
-
-  /// Construye el botón estilo Cupertino (iOS/macOS).
-  Widget _buildCupertinoButton(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SizedBox(
       width: double.infinity,
-      height: 52,
-      child: CupertinoButton(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        onPressed: isLoading ? null : onPressed,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        child: isLoading
-            ? CupertinoActivityIndicator(color: colorScheme.onSurface)
-            : _buildContent(colorScheme),
-      ),
-    );
-  }
-
-  /// Construye el botón estilo Material (Android/Web).
-  Widget _buildMaterialButton(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
+      height: 50,
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: colorScheme.surface,
-          side: BorderSide(color: colorScheme.outline),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          backgroundColor: isDark ? const Color(0xFF131314) : Colors.white,
+          side: BorderSide(
+            color: isDark ? const Color(0xFF8E918F) : const Color(0xFF747775),
+            width: 1,
           ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         child: isLoading
             ? SizedBox(
-                width: 22,
-                height: 22,
+                width: 20,
+                height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
                   color: colorScheme.onSurface,
                 ),
               )
-            : _buildContent(colorScheme),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.string(_kGoogleLogoSvg, width: 20, height: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Continuar con Google',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.25,
+                      color: isDark
+                          ? const Color(0xFFE3E3E3)
+                          : const Color(0xFF1F1F1F),
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
-
-  /// Contenido del botón: logo de Google + texto.
-  Widget _buildContent(ColorScheme colorScheme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const _GoogleLogo(size: 20),
-        const SizedBox(width: 12),
-        Text(
-          'Continuar con Google',
-          style: AppTextStyles.labelLarge.copyWith(
-            color: colorScheme.onSurface,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Logo de Google renderizado con [CustomPainter].
-///
-/// Dibuja el logo oficial de Google con los 4 colores corporativos
-/// sin depender de assets externos.
-class _GoogleLogo extends StatelessWidget {
-  final double size;
-
-  const _GoogleLogo({required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(size: Size(size, size), painter: _GoogleLogoPainter());
-  }
-}
-
-/// Painter que dibuja el logo de Google con los colores corporativos.
-class _GoogleLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double s = size.width;
-    final center = Offset(s / 2, s / 2);
-    final radius = s / 2;
-    final strokeWidth = s * 0.2;
-
-    // Azul (derecha-arriba)
-    _drawArc(
-      canvas,
-      center,
-      radius,
-      strokeWidth,
-      -0.4,
-      1.2,
-      const Color(0xFF4285F4),
-    );
-    // Verde (derecha-abajo)
-    _drawArc(
-      canvas,
-      center,
-      radius,
-      strokeWidth,
-      0.8,
-      0.9,
-      const Color(0xFF34A853),
-    );
-    // Amarillo (izquierda-abajo)
-    _drawArc(
-      canvas,
-      center,
-      radius,
-      strokeWidth,
-      1.7,
-      0.8,
-      const Color(0xFFFBBC05),
-    );
-    // Rojo (izquierda-arriba)
-    _drawArc(
-      canvas,
-      center,
-      radius,
-      strokeWidth,
-      2.5,
-      0.7,
-      const Color(0xFFEA4335),
-    );
-
-    // Barra horizontal azul
-    final barPaint = Paint()..color = const Color(0xFF4285F4);
-    canvas.drawRect(
-      Rect.fromLTWH(s * 0.48, s * 0.4, s * 0.42, strokeWidth),
-      barPaint,
-    );
-  }
-
-  void _drawArc(
-    Canvas canvas,
-    Offset center,
-    double radius,
-    double strokeWidth,
-    double startAngle,
-    double sweepAngle,
-    Color color,
-  ) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.butt;
-
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
-      startAngle * 3.14159,
-      sweepAngle * 3.14159,
-      false,
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -17,6 +17,9 @@ dependencies:
   # Google Sign-In (v7.2.0 - nuevo modelo reactivo con GoogleSignIn.instance)
   google_sign_in: 7.2.0
 
+  # SVG rendering (usado para el logo oficial de Google en el botón)
+  flutter_svg: ^2.0.10+1
+
   # State management
   flutter_riverpod: ^3.3.1
 
