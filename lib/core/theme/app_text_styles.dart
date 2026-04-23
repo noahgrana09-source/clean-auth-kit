@@ -168,7 +168,7 @@ abstract final class AppTextStyles {
     labelSmall: labelSmall.copyWith(color: AppColorsDark.textDisabled),
   );
 
-  static CupertinoTextThemeData get lightCupertinoTextTheme =>
+  static final CupertinoTextThemeData lightCupertinoTextTheme =
       CupertinoTextThemeData(
         primaryColor: AppColors.brand,
         textStyle: TextStyle(color: AppColorsLight.textPrimary, fontSize: 16),
@@ -184,7 +184,7 @@ abstract final class AppTextStyles {
         ),
       );
 
-  static CupertinoTextThemeData get darkCupertinoTextTheme =>
+  static final CupertinoTextThemeData darkCupertinoTextTheme =
       CupertinoTextThemeData(
         primaryColor: AppColors.brand,
         textStyle: TextStyle(color: AppColorsDark.textPrimary, fontSize: 16),

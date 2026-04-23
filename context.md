@@ -91,5 +91,5 @@ dart format . && flutter analyze && flutter test
 
 ## Status
 - Auth feature: ~95% done. Some errors to fix and minor refactors pending.
-- No tests written yet (mocktail is set up as dev dep).
+- 10 test files under `test/features/auth/` covering domain usecases, repository impl, and user model — 47 tests passing.
 - No product search feature started.
