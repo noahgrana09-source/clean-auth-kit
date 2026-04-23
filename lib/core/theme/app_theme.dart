@@ -86,49 +86,23 @@ abstract final class AppTheme {
   // ── Cupertino ────────────────────────────────────────────────────────────
 
   /// Tema claro de Cupertino (iOS).
-  static CupertinoThemeData get cupertinoLight => const CupertinoThemeData(
+  static CupertinoThemeData get cupertinoLight => CupertinoThemeData(
     brightness: Brightness.light,
     primaryColor: AppColors.brand,
     primaryContrastingColor: Colors.white,
     barBackgroundColor: AppColorsLight.surface,
     scaffoldBackgroundColor: AppColorsLight.background,
-    textTheme: CupertinoTextThemeData(
-      primaryColor: AppColors.brand,
-      textStyle: TextStyle(color: AppColorsLight.textPrimary, fontSize: 16),
-      navTitleTextStyle: TextStyle(
-        color: AppColorsLight.textPrimary,
-        fontSize: 17,
-        fontWeight: FontWeight.w600,
-      ),
-      navLargeTitleTextStyle: TextStyle(
-        color: AppColorsLight.textPrimary,
-        fontSize: 34,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
+    textTheme: AppTextStyles.lightCupertinoTextTheme,
   );
 
   /// Tema oscuro de Cupertino (iOS).
-  static CupertinoThemeData get cupertinoDark => const CupertinoThemeData(
+  static CupertinoThemeData get cupertinoDark => CupertinoThemeData(
     brightness: Brightness.dark,
     primaryColor: AppColors.brand,
     primaryContrastingColor: Colors.white,
     barBackgroundColor: AppColorsDark.surface,
     scaffoldBackgroundColor: AppColorsDark.background,
-    textTheme: CupertinoTextThemeData(
-      primaryColor: AppColors.brand,
-      textStyle: TextStyle(color: AppColorsDark.textPrimary, fontSize: 16),
-      navTitleTextStyle: TextStyle(
-        color: AppColorsDark.textPrimary,
-        fontSize: 17,
-        fontWeight: FontWeight.w600,
-      ),
-      navLargeTitleTextStyle: TextStyle(
-        color: AppColorsDark.textPrimary,
-        fontSize: 34,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
+    textTheme: AppTextStyles.darkCupertinoTextTheme,
   );
 
   // ── Private helpers ───────────────────────────────────────────────────────

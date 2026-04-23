@@ -26,6 +26,9 @@ dependencies:
   # Functional programming
   dartz: ^0.10.1
 
+  # Value equality
+  equatable: ^2.0.7
+
   # Código inmutable / serialización
   freezed_annotation: ^3.1.0
   json_annotation: ^4.11.0

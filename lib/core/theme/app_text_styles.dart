@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
@@ -166,4 +167,36 @@ abstract final class AppTextStyles {
     labelMedium: labelMedium.copyWith(color: AppColorsDark.textSecondary),
     labelSmall: labelSmall.copyWith(color: AppColorsDark.textDisabled),
   );
+
+  static CupertinoTextThemeData get lightCupertinoTextTheme =>
+      CupertinoTextThemeData(
+        primaryColor: AppColors.brand,
+        textStyle: TextStyle(color: AppColorsLight.textPrimary, fontSize: 16),
+        navTitleTextStyle: TextStyle(
+          color: AppColorsLight.textPrimary,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
+        navLargeTitleTextStyle: TextStyle(
+          color: AppColorsLight.textPrimary,
+          fontSize: 34,
+          fontWeight: FontWeight.w700,
+        ),
+      );
+
+  static CupertinoTextThemeData get darkCupertinoTextTheme =>
+      CupertinoTextThemeData(
+        primaryColor: AppColors.brand,
+        textStyle: TextStyle(color: AppColorsDark.textPrimary, fontSize: 16),
+        navTitleTextStyle: TextStyle(
+          color: AppColorsDark.textPrimary,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
+        navLargeTitleTextStyle: TextStyle(
+          color: AppColorsDark.textPrimary,
+          fontSize: 34,
+          fontWeight: FontWeight.w700,
+        ),
+      );
 }

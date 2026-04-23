@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 /// Base class for all failures in the application.
 ///
 /// Follows the functional error handling pattern using dartz [Either].
 /// Each failure type represents a specific category of error that can
 /// occur during the execution of use cases.
-abstract class Failure {
+abstract class Failure extends Equatable {
   /// Optional message describing the failure.
   final String message;
 
@@ -11,14 +13,7 @@ abstract class Failure {
   const Failure({this.message = ''});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Failure &&
-          runtimeType == other.runtimeType &&
-          message == other.message;
-
-  @override
-  int get hashCode => message.hashCode;
+  List<Object?> get props => [message];
 }
 
 /// Failure originating from a server or remote service.
@@ -34,17 +29,6 @@ class AuthFailure extends Failure {
 
   /// Creates an [AuthFailure] with a [code] and optional [message].
   const AuthFailure({required this.code, super.message});
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AuthFailure &&
-          runtimeType == other.runtimeType &&
-          code == other.code &&
-          message == other.message;
-
-  @override
-  int get hashCode => Object.hash(code, message);
 }
 
 /// Failure when Google Sign-In is cancelled or fails.
