@@ -18,8 +18,14 @@ const String _kGoogleLogoSvg = '''
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
+  final String text;
 
-  const GoogleSignInButton({super.key, this.onPressed, this.isLoading = false});
+  const GoogleSignInButton({
+    super.key,
+    this.onPressed,
+    this.isLoading = false,
+    this.text = 'Continuar con Google',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +63,7 @@ class GoogleSignInButton extends StatelessWidget {
                   SvgPicture.string(_kGoogleLogoSvg, width: 20, height: 20),
                   const SizedBox(width: 10),
                   Text(
-                    'Continuar con Google',
+                    text,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,

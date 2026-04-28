@@ -32,8 +32,8 @@ abstract class AuthRepository {
 
   /// Signs out the currently authenticated user.
   ///
-  /// Returns [void] on success or a [Failure] on error.
-  Future<Either<Failure, void>> signOut();
+  /// Returns [Unit] on success or a [Failure] on error.
+  Future<Either<Failure, Unit>> signOut();
 
   /// Watches the authentication state and emits [UserEntity] or null.
   ///

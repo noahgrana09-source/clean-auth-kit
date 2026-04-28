@@ -20,11 +20,11 @@ void main() {
     test('should return void when sign out is successful', () async {
       when(
         () => mockRepository.signOut(),
-      ).thenAnswer((_) async => const Right(null));
+      ).thenAnswer((_) async => const Right(unit));
 
       final result = await useCase(const NoParams());
 
-      expect(result, const Right(null));
+      expect(result, const Right(unit));
       verify(() => mockRepository.signOut()).called(1);
       verifyNoMoreInteractions(mockRepository);
     });

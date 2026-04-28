@@ -195,6 +195,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           GoogleSignInButton(
             isLoading: isLoading,
             onPressed: isLoading ? null : _signInWithGoogle,
+            text: "Iniciar sesión con Google",
           ),
           const SizedBox(height: 24),
 

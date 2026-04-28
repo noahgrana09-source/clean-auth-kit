@@ -278,6 +278,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           GoogleSignInButton(
             isLoading: isLoading,
             onPressed: isLoading ? null : _signInWithGoogle,
+            text: "Registrarse con Google",
           ),
           const SizedBox(height: 24),
 

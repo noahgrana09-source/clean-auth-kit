@@ -68,10 +68,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
+  Future<Either<Failure, Unit>> signOut() async {
     try {
       await _remoteDataSource.signOut();
-      return const Right(null);
+      return const Right(unit);
     } on Exception catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

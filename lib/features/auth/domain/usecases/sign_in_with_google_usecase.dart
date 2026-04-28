@@ -13,7 +13,7 @@ class SignInWithGoogleUseCase extends UseCase<UserEntity, NoParams> {
   final AuthRepository _repository;
 
   /// Creates a [SignInWithGoogleUseCase] with the given [repository].
-  SignInWithGoogleUseCase(AuthRepository repository) : _repository = repository;
+  SignInWithGoogleUseCase(this._repository);
 
   @override
   Future<Either<Failure, UserEntity>> call(NoParams params) {
