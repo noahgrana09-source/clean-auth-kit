@@ -35,6 +35,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _submitted = false;
 
   @override
   void dispose() {
@@ -99,6 +100,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   /// Ejecuta el registro con email y contraseña.
   Future<void> _signUpWithEmail() async {
+    setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     await ref
         .read(authNotifierProvider.notifier)
@@ -164,7 +166,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget _buildForm(bool isLoading, String? errorMessage) {
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: _submitted
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

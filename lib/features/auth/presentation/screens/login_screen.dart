@@ -14,14 +14,7 @@ import '../widgets/auth_header.dart';
 import '../widgets/google_sign_in_button.dart';
 import 'register_screen.dart';
 
-/// Pantalla de inicio de sesión adaptativa y responsiva.
-///
-/// Usa [ConsumerStatefulWidget] de Riverpod para manejar el estado
-/// de autenticación. Renderiza widgets nativos de Cupertino en iOS
-/// y Material en Android. El formulario se limita a 400px de ancho
-/// en tablets/landscape para una mejor experiencia.
 class LoginScreen extends ConsumerStatefulWidget {
-  /// Crea un [LoginScreen].
   const LoginScreen({super.key});
 
   @override
@@ -33,6 +26,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  String? _emailError;
+  String? _passwordError;
+  bool _attemptedEmailSignIn = false;
 
   @override
   void dispose() {
@@ -41,46 +37,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  /// Valida un email con una expresión regular básica.
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'El correo electrónico es obligatorio';
-    }
-    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Ingresa un correo electrónico válido';
-    }
-    return null;
-  }
-
-  /// Valida que la contraseña tenga al menos 6 caracteres.
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'La contraseña es obligatoria';
-    }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
-    }
-    return null;
-  }
-
-  /// Ejecuta el inicio de sesión con email y contraseña.
   Future<void> _signInWithEmail() async {
-    if (!_formKey.currentState!.validate()) return;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    final emailErr = email.isEmpty ? 'El correo electrónico es obligatorio' : null;
+    final passErr = password.isEmpty ? 'La contraseña es obligatoria' : null;
+
+    setState(() {
+      _emailError = emailErr;
+      _passwordError = passErr;
+    });
+    _formKey.currentState?.validate();
+
+    if (emailErr != null || passErr != null) return;
+
+    _attemptedEmailSignIn = true;
     await ref
         .read(authNotifierProvider.notifier)
         .signInWithEmail(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: email,
+          password: password,
         );
   }
 
-  /// Ejecuta el inicio de sesión con Google.
   Future<void> _signInWithGoogle() async {
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+    });
+    _formKey.currentState?.validate();
     await ref.read(authNotifierProvider.notifier).signInWithGoogle();
   }
 
-  /// Navega a la pantalla de registro.
   void _navigateToRegister() {
     Navigator.of(
       context,
@@ -89,20 +78,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authNotifierProvider, (_, next) {
+      if (_attemptedEmailSignIn && next is AuthError) {
+        _attemptedEmailSignIn = false;
+        setState(() {
+          _emailError = 'Usuario o contraseña incorrectos';
+          _passwordError = 'Usuario o contraseña incorrectos';
+        });
+        _formKey.currentState?.validate();
+      }
+    });
+
     final authState = ref.watch(authNotifierProvider);
     final isLoading = authState is AuthLoading;
-    final errorMessage = authState is AuthError ? authState.message : null;
+    final bannerError =
+        authState is AuthError && _emailError == null && _passwordError == null
+            ? authState.message
+            : null;
 
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(
-        child: SafeArea(child: _buildBody(isLoading, errorMessage)),
+        child: SafeArea(child: _buildBody(isLoading, bannerError)),
       );
     }
 
-    return Scaffold(body: SafeArea(child: _buildBody(isLoading, errorMessage)));
+    return Scaffold(body: SafeArea(child: _buildBody(isLoading, bannerError)));
   }
 
-  /// Construye el cuerpo de la pantalla con layout responsivo.
   Widget _buildBody(bool isLoading, String? errorMessage) {
     return Center(
       child: SingleChildScrollView(
@@ -119,27 +121,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  /// Construye el formulario de inicio de sesión.
   Widget _buildForm(bool isLoading, String? errorMessage) {
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.disabled,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header
           const AuthHeader(
             title: 'Bienvenido',
             subtitle: 'Inicia sesión para continuar',
           ),
           const SizedBox(height: 32),
 
-          // Error
           AuthErrorWidget(message: errorMessage),
           if (errorMessage != null) const SizedBox(height: 16),
 
-          // Campo email
           AdaptiveTextField(
             controller: _emailController,
             hint: 'Correo electrónico',
@@ -148,11 +146,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             prefixIcon: PlatformUtils.isCupertino
                 ? CupertinoIcons.mail
                 : Icons.email_outlined,
-            validator: _validateEmail,
+            validator: (_) => _emailError,
           ),
           const SizedBox(height: 16),
 
-          // Campo contraseña
           AdaptiveTextField(
             controller: _passwordController,
             hint: 'Contraseña',
@@ -175,11 +172,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 size: 20,
               ),
             ),
-            validator: _validatePassword,
+            validator: (_) => _passwordError,
           ),
           const SizedBox(height: 24),
 
-          // Botón iniciar sesión
           AdaptiveButton(
             text: 'Iniciar sesión',
             isLoading: isLoading,
@@ -187,26 +183,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Separador
           _buildDivider(),
           const SizedBox(height: 16),
 
-          // Botón Google
           GoogleSignInButton(
             isLoading: isLoading,
             onPressed: isLoading ? null : _signInWithGoogle,
-            text: "Iniciar sesión con Google",
+            text: 'Iniciar sesión con Google',
           ),
           const SizedBox(height: 24),
 
-          // Link a registro
           _buildRegisterLink(),
         ],
       ),
     );
   }
 
-  /// Separador con texto "o".
   Widget _buildDivider() {
     final color = Theme.of(context).colorScheme.onSurfaceVariant;
     return Row(
@@ -224,7 +216,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  /// Link de navegación a la pantalla de registro.
   Widget _buildRegisterLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

@@ -84,6 +84,9 @@ firebaseAuthProvider
 - `google_sign_in_button.dart`: Uses `flutter_svg ^2.0.10+1` with the official Google G SVG embedded as a string constant (`_kGoogleLogoSvg`). `flutter_signin_button` was removed — incompatible with `font_awesome_flutter` v11 (`FaIconData` no longer extends `IconData`).
 - Password validation in `register_screen.dart`: ≥8 chars, uppercase, digit, special char (`[!@#$%^&*()\-_=+\[\]{};:,.<>?/\\|~]`).
 
+## Collaboration Workflow
+Before writing any code for large changes, or when the user provides a goal/objective instead of a specific technical task, present a written plan (approach, files affected, key decisions) and wait for approval before editing anything.
+
 ## Quality checks (run after every change)
 ```bash
 dart format . && flutter analyze && flutter test
