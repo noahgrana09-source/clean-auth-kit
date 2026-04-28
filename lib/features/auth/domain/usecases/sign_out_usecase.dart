@@ -5,16 +5,16 @@ import 'package:product_searcher/features/auth/domain/repositories/auth_reposito
 
 /// Use case for signing out the currently authenticated user.
 ///
-/// Delegates to [AuthRepository.signOut] and returns [void] on success.
-class SignOutUseCase extends UseCase<void, NoParams> {
+/// Delegates to [AuthRepository.signOut] and returns [Unit] on success.
+class SignOutUseCase extends UseCase<Unit, NoParams> {
   /// The authentication repository.
   final AuthRepository _repository;
 
   /// Creates a [SignOutUseCase] with the given [repository].
-  SignOutUseCase(AuthRepository repository) : _repository = repository;
+  SignOutUseCase(this._repository);
 
   @override
-  Future<Either<Failure, void>> call(NoParams params) {
+  Future<Either<Failure, Unit>> call(NoParams params) {
     return _repository.signOut();
   }
 }

@@ -10,7 +10,7 @@ class GetCurrentUserUseCase {
   final AuthRepository _repository;
 
   /// Creates a [GetCurrentUserUseCase] with the given [repository].
-  GetCurrentUserUseCase(AuthRepository repository) : _repository = repository;
+  GetCurrentUserUseCase(this._repository);
 
   /// Returns the current [UserEntity] or `null`.
   UserEntity? call() {

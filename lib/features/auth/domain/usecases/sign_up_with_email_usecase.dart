@@ -14,7 +14,7 @@ class SignUpWithEmailUseCase
   final AuthRepository _repository;
 
   /// Creates a [SignUpWithEmailUseCase] with the given [repository].
-  SignUpWithEmailUseCase(AuthRepository repository) : _repository = repository;
+  SignUpWithEmailUseCase(this._repository);
 
   @override
   Future<Either<Failure, UserEntity>> call(SignUpWithEmailParams params) {

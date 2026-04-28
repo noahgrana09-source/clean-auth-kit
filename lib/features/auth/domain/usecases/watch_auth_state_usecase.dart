@@ -11,7 +11,7 @@ class WatchAuthStateUseCase extends StreamUseCase<UserEntity?, NoParams> {
   final AuthRepository _repository;
 
   /// Creates a [WatchAuthStateUseCase] with the given [repository].
-  WatchAuthStateUseCase(AuthRepository repository) : _repository = repository;
+  WatchAuthStateUseCase(this._repository);
 
   @override
   Stream<UserEntity?> call(NoParams params) {
