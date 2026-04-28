@@ -88,6 +88,10 @@ class AuthNotifier extends Notifier<AuthState> {
     );
   }
 
+  void clearError() {
+    if (state is AuthError) state = const AuthState.unauthenticated();
+  }
+
   /// Signs out the currently authenticated user.
   ///
   /// Emits [AuthLoading] while the operation is in progress,

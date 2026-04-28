@@ -212,12 +212,12 @@ void main() {
   });
 
   group('signOut', () {
-    test('should return Right(null) when sign out succeeds', () async {
+    test('should return Right(unit) when sign out succeeds', () async {
       when(() => mockDataSource.signOut()).thenAnswer((_) async {});
 
       final result = await repository.signOut();
 
-      expect(result, const Right(null));
+      expect(result, const Right(unit));
       verify(() => mockDataSource.signOut()).called(1);
     });
 

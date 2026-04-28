@@ -38,6 +38,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _submitted = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authNotifierProvider.notifier).clearError();
+    });
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();

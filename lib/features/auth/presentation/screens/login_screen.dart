@@ -41,7 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    final emailErr = email.isEmpty ? 'El correo electrónico es obligatorio' : null;
+    final emailErr = email.isEmpty
+        ? 'El correo electrónico es obligatorio'
+        : null;
     final passErr = password.isEmpty ? 'La contraseña es obligatoria' : null;
 
     setState(() {
@@ -55,10 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     _attemptedEmailSignIn = true;
     await ref
         .read(authNotifierProvider.notifier)
-        .signInWithEmail(
-          email: email,
-          password: password,
-        );
+        .signInWithEmail(email: email, password: password);
   }
 
   Future<void> _signInWithGoogle() async {
@@ -71,6 +70,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void _navigateToRegister() {
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+    });
+    _formKey.currentState?.validate();
+    ref.read(authNotifierProvider.notifier).clearError();
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
@@ -93,8 +98,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = authState is AuthLoading;
     final bannerError =
         authState is AuthError && _emailError == null && _passwordError == null
-            ? authState.message
-            : null;
+        ? authState.message
+        : null;
 
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(
