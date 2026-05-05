@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:product_searcher/core/usecases/usecase.dart';
@@ -23,12 +24,19 @@ final firebaseAuthProvider = Provider<FirebaseAuth>(
   (ref) => FirebaseAuth.instance,
 );
 
+/// Provides the [FirebaseFirestore] singleton instance.
+final firestoreProvider = Provider<FirebaseFirestore>(
+  (ref) => FirebaseFirestore.instance,
+);
+
 /// Provides the [AuthRemoteDataSource] implementation.
 ///
-/// Depends on [firebaseAuthProvider] for Firebase Auth operations.
+/// Depends on [firebaseAuthProvider] and [firestoreProvider].
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>(
-  (ref) =>
-      AuthRemoteDataSourceImpl(firebaseAuth: ref.watch(firebaseAuthProvider)),
+  (ref) => AuthRemoteDataSourceImpl(
+    firebaseAuth: ref.watch(firebaseAuthProvider),
+    firestore: ref.watch(firestoreProvider),
+  ),
 );
 
 // ---------------------------------------------------------------------------

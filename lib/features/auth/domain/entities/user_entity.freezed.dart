@@ -19,7 +19,8 @@ mixin _$UserEntity {
  String get email;/// The user's display name.
  String? get displayName;/// The URL of the user's profile photo.
  String? get photoUrl;/// Whether the user's email has been verified.
- bool get isEmailVerified;
+ bool get isEmailVerified;/// The date and time when the user account was created.
+ DateTime get createdAt;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +31,16 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl,isEmailVerified);
+int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl,isEmailVerified,createdAt);
 
 @override
 String toString() {
-  return 'UserEntity(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl, isEmailVerified: $isEmailVerified)';
+  return 'UserEntity(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl, isEmailVerified: $isEmailVerified, createdAt: $createdAt)';
 }
 
 
@@ -50,7 +51,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- String uid, String email, String? displayName, String? photoUrl, bool isEmailVerified
+ String uid, String email, String? displayName, String? photoUrl, bool isEmailVerified, DateTime createdAt
 });
 
 
@@ -67,14 +68,15 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? isEmailVerified = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? isEmailVerified = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,isEmailVerified: null == isEmailVerified ? _self.isEmailVerified : isEmailVerified // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified);case _:
+return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified,_that.createdAt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isE
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified);case _:
+return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isE
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String? displayName,  String? photoUrl,  bool isEmailVerified,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified);case _:
+return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isEmailVerified,_that.createdAt);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoUrl,_that.isE
 
 
 class _UserEntity implements UserEntity {
-  const _UserEntity({required this.uid, required this.email, this.displayName, this.photoUrl, this.isEmailVerified = false});
+  const _UserEntity({required this.uid, required this.email, this.displayName, this.photoUrl, this.isEmailVerified = false, required this.createdAt});
   
 
 /// The unique identifier of the user.
@@ -228,6 +230,8 @@ class _UserEntity implements UserEntity {
 @override final  String? photoUrl;
 /// Whether the user's email has been verified.
 @override@JsonKey() final  bool isEmailVerified;
+/// The date and time when the user account was created.
+@override final  DateTime createdAt;
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +243,16 @@ _$UserEntityCopyWith<_UserEntity> get copyWith => __$UserEntityCopyWithImpl<_Use
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl,isEmailVerified);
+int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl,isEmailVerified,createdAt);
 
 @override
 String toString() {
-  return 'UserEntity(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl, isEmailVerified: $isEmailVerified)';
+  return 'UserEntity(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl, isEmailVerified: $isEmailVerified, createdAt: $createdAt)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String uid, String email, String? displayName, String? photoUrl, bool isEmailVerified
+ String uid, String email, String? displayName, String? photoUrl, bool isEmailVerified, DateTime createdAt
 });
 
 
@@ -276,14 +280,15 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? isEmailVerified = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? isEmailVerified = null,Object? createdAt = null,}) {
   return _then(_UserEntity(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,isEmailVerified: null == isEmailVerified ? _self.isEmailVerified : isEmailVerified // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 

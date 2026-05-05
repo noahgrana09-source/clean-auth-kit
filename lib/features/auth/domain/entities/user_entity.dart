@@ -30,5 +30,8 @@ abstract class UserEntity with _$UserEntity {
 
     /// Whether the user's email has been verified.
     @Default(false) bool isEmailVerified,
+
+    /// The date and time when the user account was created.
+    required DateTime createdAt,
   }) = _UserEntity;
 }

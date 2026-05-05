@@ -14,12 +14,13 @@ void main() {
     useCase = GetCurrentUserUseCase(mockRepository);
   });
 
-  const tUser = UserEntity(
+  final tUser = UserEntity(
     uid: '123',
     email: 'test@example.com',
     displayName: 'Test User',
     photoUrl: 'https://photo.url',
     isEmailVerified: true,
+    createdAt: DateTime(2024, 1, 1),
   );
 
   group('GetCurrentUserUseCase', () {

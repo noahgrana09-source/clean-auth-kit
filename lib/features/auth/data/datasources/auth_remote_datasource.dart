@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:product_searcher/features/auth/data/models/user_model.dart';
@@ -52,9 +53,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// The Firebase Authentication instance.
   final FirebaseAuth _firebaseAuth;
 
-  /// Creates an [AuthRemoteDataSourceImpl] with the given [firebaseAuth] instance.
-  AuthRemoteDataSourceImpl({required FirebaseAuth firebaseAuth})
-    : _firebaseAuth = firebaseAuth;
+  /// The Firestore instance for persisting user data.
+  final FirebaseFirestore _firestore;
+
+  AuthRemoteDataSourceImpl({
+    required FirebaseAuth firebaseAuth,
+    required FirebaseFirestore firestore,
+  }) : _firebaseAuth = firebaseAuth,
+       _firestore = firestore;
 
   @override
   Future<UserModel> signInWithGoogle() async {
@@ -89,7 +95,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('Firebase sign-in returned null user');
     }
 
-    return UserModel.fromFirebaseUser(user);
+    final userModel = UserModel.fromFirebaseUser(user);
+
+    // Persist the user document on first Google sign-in
+    if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+      await _saveUserToFirestore(userModel);
+    }
+
+    return userModel;
   }
 
   @override
@@ -132,7 +145,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('User not found after profile update');
     }
 
-    return UserModel.fromFirebaseUser(updatedUser);
+    final userModel = UserModel.fromFirebaseUser(updatedUser);
+    await _saveUserToFirestore(userModel);
+    return userModel;
   }
 
   @override
@@ -156,5 +171,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final User? user = _firebaseAuth.currentUser;
     if (user == null) return null;
     return UserModel.fromFirebaseUser(user);
+  }
+
+  Future<void> _saveUserToFirestore(UserModel model) async {
+    await _firestore
+        .collection('users')
+        .doc(model.uid)
+        .set(model.toFirestore(), SetOptions(merge: true));
   }
 }

@@ -15,11 +15,12 @@ void main() {
     useCase = WatchAuthStateUseCase(mockRepository);
   });
 
-  const tUser = UserEntity(
+  final tUser = UserEntity(
     uid: '123',
     email: 'test@example.com',
     displayName: 'Test User',
     isEmailVerified: true,
+    createdAt: DateTime(2024, 1, 1),
   );
 
   group('WatchAuthStateUseCase', () {

@@ -17,12 +17,13 @@ void main() {
     repository = AuthRepositoryImpl(remoteDataSource: mockDataSource);
   });
 
-  const tUserModel = UserModel(
+  final tUserModel = UserModel(
     uid: '123',
     email: 'test@example.com',
     displayName: 'Test User',
     photoUrl: 'https://photo.url',
     isEmailVerified: true,
+    createdAt: DateTime(2024, 1, 1),
   );
 
   final tUserEntity = tUserModel.toEntity();

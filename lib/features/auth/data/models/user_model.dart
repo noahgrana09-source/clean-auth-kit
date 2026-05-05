@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
@@ -11,7 +12,6 @@ part 'user_model.g.dart';
 /// Uses [freezed] for immutability and [json_serializable] for serialization.
 @freezed
 abstract class UserModel with _$UserModel {
-  /// Creates a [UserModel] with the user's authentication data.
   const factory UserModel({
     /// The unique identifier of the user.
     required String uid,
@@ -27,14 +27,15 @@ abstract class UserModel with _$UserModel {
 
     /// Whether the user's email has been verified.
     @Default(false) bool isEmailVerified,
+
+    /// The date and time when the user account was created.
+    required DateTime createdAt,
   }) = _UserModel;
 
   /// Private constructor required for adding custom methods to freezed classes.
   const UserModel._();
 
   /// Creates a [UserModel] from a Firebase [firebase.User].
-  ///
-  /// Maps Firebase user properties to the corresponding model fields.
   factory UserModel.fromFirebaseUser(firebase.User firebaseUser) {
     return UserModel(
       uid: firebaseUser.uid,
@@ -42,12 +43,40 @@ abstract class UserModel with _$UserModel {
       displayName: firebaseUser.displayName,
       photoUrl: firebaseUser.photoURL,
       isEmailVerified: firebaseUser.emailVerified,
+      createdAt: firebaseUser.metadata.creationTime ?? DateTime.now(),
+    );
+  }
+
+  /// Creates a [UserModel] from Firestore document data.
+  ///
+  /// [uid] is the document ID; [data] is the document body.
+  factory UserModel.fromFirestore(String uid, Map<String, dynamic> data) {
+    return UserModel(
+      uid: uid,
+      email: data['email'] as String? ?? '',
+      displayName: data['displayName'] as String?,
+      photoUrl: data['photoUrl'] as String?,
+      isEmailVerified: data['isEmailVerified'] as bool? ?? false,
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
   }
 
   /// Creates a [UserModel] from a JSON map.
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
+
+  /// Converts this [UserModel] to a Firestore-compatible map.
+  ///
+  /// The [uid] is omitted because it is used as the document ID.
+  Map<String, dynamic> toFirestore() {
+    return {
+      'email': email,
+      'displayName': displayName,
+      'photoUrl': photoUrl,
+      'isEmailVerified': isEmailVerified,
+      'createdAt': Timestamp.fromDate(createdAt),
+    };
+  }
 
   /// Converts this [UserModel] to a domain [UserEntity].
   UserEntity toEntity() {
@@ -57,6 +86,7 @@ abstract class UserModel with _$UserModel {
       displayName: displayName,
       photoUrl: photoUrl,
       isEmailVerified: isEmailVerified,
+      createdAt: createdAt,
     );
   }
 }

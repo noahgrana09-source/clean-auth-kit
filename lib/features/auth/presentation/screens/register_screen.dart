@@ -131,6 +131,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authNotifierProvider, (_, next) {
+      if (next is AuthAuthenticated) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    });
+
     final authState = ref.watch(authNotifierProvider);
     final isLoading = authState is AuthLoading;
     final errorMessage = authState is AuthError ? authState.message : null;

@@ -16,11 +16,12 @@ void main() {
     useCase = SignUpWithEmailUseCase(mockRepository);
   });
 
-  const tUser = UserEntity(
+  final tUser = UserEntity(
     uid: '456',
     email: 'new@example.com',
     displayName: 'New User',
     isEmailVerified: false,
+    createdAt: DateTime(2024, 1, 1),
   );
 
   const tParams = SignUpWithEmailParams(
@@ -37,11 +38,11 @@ void main() {
           password: any(named: 'password'),
           name: any(named: 'name'),
         ),
-      ).thenAnswer((_) async => const Right(tUser));
+      ).thenAnswer((_) async => Right(tUser));
 
       final result = await useCase(tParams);
 
-      expect(result, const Right(tUser));
+      expect(result, Right(tUser));
       verify(
         () => mockRepository.signUpWithEmailAndPassword(
           email: 'new@example.com',
