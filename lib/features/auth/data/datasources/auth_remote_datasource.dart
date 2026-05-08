@@ -7,6 +7,15 @@ import 'package:product_searcher/features/auth/data/models/user_model.dart';
 ///
 /// Defines all remote authentication operations that interact with
 /// Firebase Auth and Google Sign-In services.
+
+class AuthDataSourceException implements Exception {
+  final String message;
+  AuthDataSourceException({required this.message});
+
+  @override
+  String toString() => 'AuthDataSourceException: $message';
+}
+
 abstract class AuthRemoteDataSource {
   /// Signs in the user using Google authentication.
   ///
@@ -92,15 +101,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw Exception('Firebase sign-in returned null user');
+      throw AuthDataSourceException(
+        message: 'Firebase sign-in returned null user',
+      );
     }
 
     final userModel = UserModel.fromFirebaseUser(user);
 
     // Persist the user document on first Google sign-in
-    if (userCredential.additionalUserInfo?.isNewUser ?? false) {
-      await _saveUserToFirestore(userModel);
-    }
+    await _saveUserToFirestore(userModel);
 
     return userModel;
   }
@@ -115,7 +124,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw Exception('Firebase sign-in returned null user');
+      throw AuthDataSourceException(
+        message: 'Firebase sign-in returned null user',
+      );
     }
 
     return UserModel.fromFirebaseUser(user);
@@ -132,7 +143,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw Exception('Firebase sign-up returned null user');
+      throw AuthDataSourceException(
+        message: 'Firebase sign-up returned null user',
+      );
     }
 
     // Update the display name after account creation
@@ -142,7 +155,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     // Get the updated user with the display name
     final User? updatedUser = _firebaseAuth.currentUser;
     if (updatedUser == null) {
-      throw Exception('User not found after profile update');
+      throw AuthDataSourceException(
+        message: 'User not found after profile update',
+      );
     }
 
     final userModel = UserModel.fromFirebaseUser(updatedUser);
@@ -174,9 +189,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   Future<void> _saveUserToFirestore(UserModel model) async {
-    await _firestore
-        .collection('users')
-        .doc(model.uid)
-        .set(model.toFirestore(), SetOptions(merge: true));
+    final userDoc = await _firestore.collection('users').doc(model.uid).get();
+    if (!userDoc.exists) {
+      await _firestore
+          .collection('users')
+          .doc(model.uid)
+          .set(model.toFirestore(), SetOptions(merge: false));
+    }
   }
 }

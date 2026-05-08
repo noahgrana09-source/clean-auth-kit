@@ -61,65 +61,55 @@ void main() {
         expect(result.isEmailVerified, false);
       });
 
-      test(
-        'should default email to empty string when Firebase email is null',
-        () {
-          final mockUser = MockFirebaseUser();
-          final mockMetadata = MockUserMetadata();
-          when(() => mockUser.uid).thenReturn('789');
-          when(() => mockUser.email).thenReturn(null);
-          when(() => mockUser.displayName).thenReturn(null);
-          when(() => mockUser.photoURL).thenReturn(null);
-          when(() => mockUser.emailVerified).thenReturn(false);
-          when(() => mockUser.metadata).thenReturn(mockMetadata);
-          when(() => mockMetadata.creationTime).thenReturn(tCreatedAt);
+      test('should throw FormatException when Firebase email is null', () {
+        final mockUser = MockFirebaseUser();
+        final mockMetadata = MockUserMetadata();
+        when(() => mockUser.uid).thenReturn('789');
+        when(() => mockUser.email).thenReturn(null);
+        when(() => mockUser.displayName).thenReturn(null);
+        when(() => mockUser.photoURL).thenReturn(null);
+        when(() => mockUser.emailVerified).thenReturn(false);
+        when(() => mockUser.metadata).thenReturn(mockMetadata);
+        when(() => mockMetadata.creationTime).thenReturn(tCreatedAt);
 
-          final result = UserModel.fromFirebaseUser(mockUser);
+        expect(
+          () => UserModel.fromFirebaseUser(mockUser),
+          throwsA(isA<FormatException>()),
+        );
+      });
 
-          expect(result.email, '');
-        },
-      );
+      test('should throw FormatException when Firebase creationTime is null',
+          () {
+        final mockUser = MockFirebaseUser();
+        final mockMetadata = MockUserMetadata();
+        when(() => mockUser.uid).thenReturn('999');
+        when(() => mockUser.email).thenReturn('user@example.com');
+        when(() => mockUser.displayName).thenReturn(null);
+        when(() => mockUser.photoURL).thenReturn(null);
+        when(() => mockUser.emailVerified).thenReturn(false);
+        when(() => mockUser.metadata).thenReturn(mockMetadata);
+        when(() => mockMetadata.creationTime).thenReturn(null);
 
-      test(
-        'should fallback to DateTime.now() when Firebase creationTime is null',
-        () {
-          final mockUser = MockFirebaseUser();
-          final mockMetadata = MockUserMetadata();
-          when(() => mockUser.uid).thenReturn('999');
-          when(() => mockUser.email).thenReturn('user@example.com');
-          when(() => mockUser.displayName).thenReturn(null);
-          when(() => mockUser.photoURL).thenReturn(null);
-          when(() => mockUser.emailVerified).thenReturn(false);
-          when(() => mockUser.metadata).thenReturn(mockMetadata);
-          when(() => mockMetadata.creationTime).thenReturn(null);
-
-          final before = DateTime.now();
-          final result = UserModel.fromFirebaseUser(mockUser);
-          final after = DateTime.now();
-
-          expect(
-            result.createdAt.isAfter(before) ||
-                result.createdAt.isAtSameMomentAs(before),
-            true,
-          );
-          expect(
-            result.createdAt.isBefore(after) ||
-                result.createdAt.isAtSameMomentAs(after),
-            true,
-          );
-        },
-      );
+        expect(
+          () => UserModel.fromFirebaseUser(mockUser),
+          throwsA(isA<FormatException>()),
+        );
+      });
     });
 
     group('fromFirestore', () {
-      test('should create UserModel from Firestore uid and data', () {
-        final result = UserModel.fromFirestore('123', {
+      test('should create UserModel from Firestore DocumentSnapshot', () {
+        final mockDoc = MockDocumentSnapshot();
+        when(() => mockDoc.id).thenReturn('123');
+        when(() => mockDoc.data()).thenReturn({
           'email': 'test@example.com',
           'displayName': 'Test User',
           'photoUrl': 'https://photo.url',
           'isEmailVerified': true,
           'createdAt': Timestamp.fromDate(tCreatedAt),
         });
+
+        final result = UserModel.fromFirestore(mockDoc);
 
         expect(result.uid, '123');
         expect(result.email, 'test@example.com');
@@ -130,7 +120,9 @@ void main() {
       });
 
       test('should handle null optional fields from Firestore', () {
-        final result = UserModel.fromFirestore('456', {
+        final mockDoc = MockDocumentSnapshot();
+        when(() => mockDoc.id).thenReturn('456');
+        when(() => mockDoc.data()).thenReturn({
           'email': 'user@example.com',
           'displayName': null,
           'photoUrl': null,
@@ -138,6 +130,9 @@ void main() {
           'createdAt': Timestamp.fromDate(tCreatedAt),
         });
 
+        final result = UserModel.fromFirestore(mockDoc);
+
+        expect(result.uid, '456');
         expect(result.displayName, isNull);
         expect(result.photoUrl, isNull);
         expect(result.isEmailVerified, false);

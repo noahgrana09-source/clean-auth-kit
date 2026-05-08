@@ -12,3 +12,6 @@ class MockUserCredential extends Mock implements UserCredential {}
 class MockUserMetadata extends Mock implements UserMetadata {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
+
+class MockDocumentSnapshot extends Mock
+    implements DocumentSnapshot<Map<String, dynamic>> {}

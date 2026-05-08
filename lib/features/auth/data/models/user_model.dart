@@ -39,25 +39,32 @@ abstract class UserModel with _$UserModel {
   factory UserModel.fromFirebaseUser(firebase.User firebaseUser) {
     return UserModel(
       uid: firebaseUser.uid,
-      email: firebaseUser.email ?? '',
+      email: firebaseUser.email ?? (throw FormatException('Email not found')),
       displayName: firebaseUser.displayName,
       photoUrl: firebaseUser.photoURL,
       isEmailVerified: firebaseUser.emailVerified,
-      createdAt: firebaseUser.metadata.creationTime ?? DateTime.now(),
+      createdAt:
+          firebaseUser.metadata.creationTime ??
+          (throw FormatException('CreatedAt not found')),
     );
   }
 
   /// Creates a [UserModel] from Firestore document data.
   ///
   /// [uid] is the document ID; [data] is the document body.
-  factory UserModel.fromFirestore(String uid, Map<String, dynamic> data) {
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return UserModel(
-      uid: uid,
-      email: data['email'] as String? ?? '',
+      uid: doc.id,
+      email:
+          data['email'] as String? ??
+          (throw FormatException('Email not found')),
       displayName: data['displayName'] as String?,
       photoUrl: data['photoUrl'] as String?,
       isEmailVerified: data['isEmailVerified'] as bool? ?? false,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt:
+          (data['createdAt'] as Timestamp?)?.toDate() ??
+          (throw FormatException('CreatedAt not found')),
     );
   }
 
