@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/theme/app_colors.dart';
+
 // SVG oficial del logo Google G, embebido como string para evitar assets externos.
-const String _kGoogleLogoSvg = '''
+const String _googleLogoSvg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -38,9 +40,13 @@ class GoogleSignInButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: isDark ? const Color(0xFF131314) : Colors.white,
+          backgroundColor: isDark
+              ? SocialColors.googleBgDark
+              : SocialColors.googleBgLight,
           side: BorderSide(
-            color: isDark ? const Color(0xFF8E918F) : const Color(0xFF747775),
+            color: isDark
+                ? SocialColors.googleOutlineDark
+                : SocialColors.googleOutlineLight,
             width: 1,
           ),
           shape: RoundedRectangleBorder(
@@ -60,7 +66,7 @@ class GoogleSignInButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.string(_kGoogleLogoSvg, width: 20, height: 20),
+                  SvgPicture.string(_googleLogoSvg, width: 20, height: 20),
                   const SizedBox(width: 10),
                   Text(
                     text,
@@ -69,8 +75,8 @@ class GoogleSignInButton extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.25,
                       color: isDark
-                          ? const Color(0xFFE3E3E3)
-                          : const Color(0xFF1F1F1F),
+                          ? SocialColors.googleTextDark
+                          : SocialColors.googleTextLight,
                     ),
                   ),
                 ],

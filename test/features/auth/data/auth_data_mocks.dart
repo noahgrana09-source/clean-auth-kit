@@ -13,5 +13,6 @@ class MockUserMetadata extends Mock implements UserMetadata {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
+// ignore: subtype_of_sealed_class
 class MockDocumentSnapshot extends Mock
     implements DocumentSnapshot<Map<String, dynamic>> {}

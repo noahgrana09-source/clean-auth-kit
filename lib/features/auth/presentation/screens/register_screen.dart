@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
-import '../providers/auth_providers.dart';
+import '../providers/auth_notifier.dart';
 import '../providers/auth_state.dart';
 import '../widgets/adaptive_button.dart';
 import '../widgets/adaptive_text_field.dart';
@@ -36,14 +36,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _submitted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(authNotifierProvider.notifier).clearError();
-    });
-  }
 
   @override
   void dispose() {
@@ -111,7 +103,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     await ref
-        .read(authNotifierProvider.notifier)
+        .read(authProvider.notifier)
         .signUpWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -121,23 +113,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   /// Ejecuta el registro/inicio de sesión con Google.
   Future<void> _signInWithGoogle() async {
-    await ref.read(authNotifierProvider.notifier).signInWithGoogle();
+    await ref.read(authProvider.notifier).signInWithGoogle();
   }
 
   /// Regresa a la pantalla de inicio de sesión.
   void _navigateToLogin() {
+    ref.read(authProvider.notifier).clearError();
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AuthState>(authNotifierProvider, (_, next) {
+    ref.listen<AuthState>(authProvider, (_, next) {
       if (next is AuthAuthenticated) {
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
     });
 
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authProvider);
     final isLoading = authState is AuthLoading;
     final errorMessage = authState is AuthError ? authState.message : null;
 

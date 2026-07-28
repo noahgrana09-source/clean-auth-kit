@@ -78,23 +78,25 @@ void main() {
         );
       });
 
-      test('should throw FormatException when Firebase creationTime is null',
-          () {
-        final mockUser = MockFirebaseUser();
-        final mockMetadata = MockUserMetadata();
-        when(() => mockUser.uid).thenReturn('999');
-        when(() => mockUser.email).thenReturn('user@example.com');
-        when(() => mockUser.displayName).thenReturn(null);
-        when(() => mockUser.photoURL).thenReturn(null);
-        when(() => mockUser.emailVerified).thenReturn(false);
-        when(() => mockUser.metadata).thenReturn(mockMetadata);
-        when(() => mockMetadata.creationTime).thenReturn(null);
+      test(
+        'should throw FormatException when Firebase creationTime is null',
+        () {
+          final mockUser = MockFirebaseUser();
+          final mockMetadata = MockUserMetadata();
+          when(() => mockUser.uid).thenReturn('999');
+          when(() => mockUser.email).thenReturn('user@example.com');
+          when(() => mockUser.displayName).thenReturn(null);
+          when(() => mockUser.photoURL).thenReturn(null);
+          when(() => mockUser.emailVerified).thenReturn(false);
+          when(() => mockUser.metadata).thenReturn(mockMetadata);
+          when(() => mockMetadata.creationTime).thenReturn(null);
 
-        expect(
-          () => UserModel.fromFirebaseUser(mockUser),
-          throwsA(isA<FormatException>()),
-        );
-      });
+          expect(
+            () => UserModel.fromFirebaseUser(mockUser),
+            throwsA(isA<FormatException>()),
+          );
+        },
+      );
     });
 
     group('fromFirestore', () {

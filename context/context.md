@@ -56,9 +56,10 @@ lib/
                 └── google_sign_in_button.dart
 ```
 
-## Provider Chain (auth_providers.dart)
+## Provider Chain (auth_providers.dart + auth_notifier.dart)
+All providers use `riverpod_generator` (`@Riverpod(keepAlive: true)`). Generated files: `auth_providers.g.dart`, `auth_notifier.g.dart`.
 ```
-firebaseAuthProvider
+firebaseAuthProvider          (auth_providers.g.dart)
   └─ authRemoteDataSourceProvider
        └─ authRepositoryProvider
             ├─ signInWithGoogleUseCaseProvider
@@ -66,11 +67,11 @@ firebaseAuthProvider
             ├─ signUpWithEmailUseCaseProvider
             ├─ signOutUseCaseProvider
             ├─ watchAuthStateUseCaseProvider
+            │    └─ authStateStreamProvider (Stream<UserEntity?> — auth_providers.g.dart)
             └─ getCurrentUserUseCaseProvider
-                 └─ authNotifierProvider (NotifierProvider<AuthNotifier, AuthState>)
-                 └─ authStateStreamProvider (StreamProvider<UserEntity?>)
-                 └─ authStateProvider (convenience Provider<AuthState>)
+                 └─ authProvider  (NotifierProvider<AuthNotifier, AuthState> — auth_notifier.g.dart)
 ```
+Note: `authProvider` is the generated name for `AuthNotifier` (riverpod_generator 4.x strips the `Notifier` suffix). No `authStateProvider` (eliminated).
 
 ## Key Implementation Notes
 - Google Sign-In 7.2.0 breaking changes: `GoogleSignIn.instance.initialize()` must be called before `authenticate()`. `authenticate()` throws `GoogleSignInException` on cancel. `idToken` only (no `accessToken`) for Firebase credential.

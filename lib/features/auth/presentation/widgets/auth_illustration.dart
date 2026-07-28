@@ -99,7 +99,7 @@ class _AuthIllustrationState extends State<AuthIllustration>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFB07EFA),
+                        AppColors.brandLight,
                         AppColors.brand,
                         AppColors.brandDark,
                       ],

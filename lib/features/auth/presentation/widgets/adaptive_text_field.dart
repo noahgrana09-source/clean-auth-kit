@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/platform_utils.dart';
+import 'app_cupertino_text_field.dart';
 
 /// Campo de texto adaptativo que renderiza [CupertinoTextField] en iOS
 /// y [TextField] (Material) en Android/Web.
@@ -66,40 +67,17 @@ class AdaptiveTextField extends StatelessWidget {
 
   /// Construye el campo de texto estilo Cupertino (iOS/macOS).
   Widget _buildCupertinoField(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return CupertinoTextField(
+    return AppCupertinoTextField(
       controller: controller,
-      placeholder: hint,
+      hint: hint,
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       onChanged: onChanged,
       autofocus: autofocus,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outline),
-      ),
-      placeholderStyle: TextStyle(
-        color: colorScheme.onSurface.withAlpha(100),
-        fontSize: 16,
-      ),
-      style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
-      prefix: prefixIcon != null
-          ? Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: Icon(
-                prefixIcon,
-                color: colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-            )
-          : null,
-      suffix: suffixIcon != null
-          ? Padding(padding: const EdgeInsets.only(right: 8), child: suffixIcon)
-          : null,
+      validator: validator,
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
     );
   }
 

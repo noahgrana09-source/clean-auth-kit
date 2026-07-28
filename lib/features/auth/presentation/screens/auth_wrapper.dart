@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/platform_utils.dart';
+import '../providers/auth_notifier.dart';
 import '../providers/auth_providers.dart';
 import 'login_screen.dart';
 
@@ -51,7 +52,7 @@ class AuthWrapper extends ConsumerWidget {
     String? displayName,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    void signOut() => ref.read(authNotifierProvider.notifier).signOut();
+    void signOut() => ref.read(authProvider.notifier).signOut();
 
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(

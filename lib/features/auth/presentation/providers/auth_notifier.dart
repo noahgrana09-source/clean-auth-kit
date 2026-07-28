@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
 import 'package:product_searcher/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:product_searcher/features/auth/domain/usecases/sign_in_with_email_usecase.dart';
@@ -7,15 +7,17 @@ import 'package:product_searcher/features/auth/domain/usecases/sign_out_usecase.
 import 'package:product_searcher/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
 import 'package:product_searcher/features/auth/presentation/providers/auth_providers.dart';
 import 'package:product_searcher/features/auth/presentation/providers/auth_state.dart';
-
 import '../../../../core/usecases/usecase.dart';
+
+part 'auth_notifier.g.dart';
 
 /// Manages the authentication state of the application.
 ///
-/// Uses Riverpod 3.x [Notifier] to emit [AuthState] changes in response to
-/// authentication operations. Each method delegates to the corresponding
+/// Uses Riverpod generator [Notifier] to emit [AuthState] changes in response
+/// to authentication operations. Each method delegates to the corresponding
 /// use case and maps the result to the appropriate state.
-class AuthNotifier extends Notifier<AuthState> {
+@Riverpod(keepAlive: true)
+class AuthNotifier extends _$AuthNotifier {
   late final SignInWithGoogleUseCase _signInWithGoogle;
   late final SignInWithEmailUseCase _signInWithEmail;
   late final SignUpWithEmailUseCase _signUpWithEmail;
@@ -39,9 +41,6 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Signs in the user using Google authentication.
-  ///
-  /// Emits [AuthLoading] while the operation is in progress,
-  /// then either [AuthAuthenticated] on success or [AuthError] on failure.
   Future<void> signInWithGoogle() async {
     state = const AuthState.loading();
     final result = await _signInWithGoogle(const NoParams());
@@ -52,9 +51,6 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Signs in the user with email and password credentials.
-  ///
-  /// Emits [AuthLoading] while the operation is in progress,
-  /// then either [AuthAuthenticated] on success or [AuthError] on failure.
   Future<void> signInWithEmail({
     required String email,
     required String password,
@@ -70,9 +66,6 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Creates a new user account with email, password, and display name.
-  ///
-  /// Emits [AuthLoading] while the operation is in progress,
-  /// then either [AuthAuthenticated] on success or [AuthError] on failure.
   Future<void> signUpWithEmail({
     required String email,
     required String password,
@@ -93,9 +86,6 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Signs out the currently authenticated user.
-  ///
-  /// Emits [AuthLoading] while the operation is in progress,
-  /// then either [AuthUnauthenticated] on success or [AuthError] on failure.
   Future<void> signOut() async {
     state = const AuthState.loading();
     final result = await _signOut(const NoParams());

@@ -23,7 +23,7 @@ abstract final class AppColors {
   static const Color brandDark = Color(0xFF5B21B6);
 
   /// Variante más clara del brand (fondos sutiles, badges).
-  static const Color brandLight = Color(0xFFEDE9FE);
+  static const Color brandLight = Color(0xFFB07EFA);
 
   /// Brand con opacidad reducida para overlays.
   static const Color brandFaded = Color(0x337C3AED);
@@ -97,4 +97,27 @@ abstract final class AppColorsDark {
 
   /// Color de éxito.
   static const Color success = Color(0xFF4ADE80);
+}
+
+// ── Social / Third Party ─────────────────────────────────────────────────
+
+/// Colores de branding para servicios externos.
+abstract final class SocialColors {
+  /// Google - Fondo (Light).
+  static const Color googleBgLight = Color(0xFFFFFFFF);
+
+  /// Google - Fondo (Dark).
+  static const Color googleBgDark = Color(0xFF131314);
+
+  /// Google - Borde (Light).
+  static const Color googleOutlineLight = Color(0xFF747775);
+
+  /// Google - Borde (Dark).
+  static const Color googleOutlineDark = Color(0xFF8E918F);
+
+  /// Google - Texto (Light).
+  static const Color googleTextLight = Color(0xFF1F1F1F);
+
+  /// Google - Texto (Dark).
+  static const Color googleTextDark = Color(0xFFE3E3E3);
 }

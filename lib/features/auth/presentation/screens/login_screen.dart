@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
-import '../providers/auth_providers.dart';
+import '../providers/auth_notifier.dart';
 import '../providers/auth_state.dart';
 import '../widgets/adaptive_button.dart';
 import '../widgets/adaptive_text_field.dart';
@@ -56,7 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     _attemptedEmailSignIn = true;
     await ref
-        .read(authNotifierProvider.notifier)
+        .read(authProvider.notifier)
         .signInWithEmail(email: email, password: password);
   }
 
@@ -66,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _passwordError = null;
     });
     _formKey.currentState?.validate();
-    await ref.read(authNotifierProvider.notifier).signInWithGoogle();
+    await ref.read(authProvider.notifier).signInWithGoogle();
   }
 
   void _navigateToRegister() {
@@ -75,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _passwordError = null;
     });
     _formKey.currentState?.validate();
-    ref.read(authNotifierProvider.notifier).clearError();
+    ref.read(authProvider.notifier).clearError();
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
@@ -83,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AuthState>(authNotifierProvider, (_, next) {
+    ref.listen<AuthState>(authProvider, (_, next) {
       if (_attemptedEmailSignIn && next is AuthError) {
         _attemptedEmailSignIn = false;
         setState(() {
@@ -94,7 +94,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     });
 
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authProvider);
     final isLoading = authState is AuthLoading;
     final bannerError =
         authState is AuthError && _emailError == null && _passwordError == null
