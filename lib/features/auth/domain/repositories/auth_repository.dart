@@ -35,11 +35,6 @@ abstract class AuthRepository {
   /// Returns [Unit] on success or a [Failure] on error.
   Future<Either<Failure, Unit>> signOut();
 
-  /// Watches the authentication state and emits [UserEntity] or null.
-  ///
-  /// Emits a [UserEntity] when a user is signed in, or `null` when signed out.
-  Stream<UserEntity?> watchAuthState();
-
   /// Returns the currently authenticated user, or `null` if not signed in.
   UserEntity? getCurrentUser();
 }

@@ -4,32 +4,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/platform_utils.dart';
 import '../providers/auth_notifier.dart';
-import '../providers/auth_providers.dart';
+import '../providers/auth_state.dart';
 import 'login_screen.dart';
 
 /// Widget raíz de autenticación que observa el estado de auth.
 ///
-/// Escucha [authStateStreamProvider] y redirige automáticamente:
-/// - Si el usuario está autenticado → pantalla principal (placeholder).
-/// - Si no está autenticado → [LoginScreen].
-/// - Mientras determina el estado → indicador de carga nativo.
+/// Observa [authProvider] y redirige según el estado:
+/// - [AuthAuthenticated] → pantalla principal (placeholder).
+/// - [AuthUnauthenticated] / [AuthError] → [LoginScreen].
+/// - [AuthInitial] / [AuthLoading] → indicador de carga nativo.
 class AuthWrapper extends ConsumerWidget {
-  /// Crea un [AuthWrapper].
   const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authStateAsync = ref.watch(authStateStreamProvider);
+    final authState = ref.watch(authProvider);
 
-    return authStateAsync.when(
-      data: (user) {
-        if (user != null) {
-          return _buildAuthenticatedScreen(context, ref, user.displayName);
-        }
-        return const LoginScreen();
-      },
-      loading: () => _buildLoadingScreen(),
-      error: (error, _) => const LoginScreen(),
+    return authState.when(
+      initial: _buildLoadingScreen,
+      loading: _buildLoadingScreen,
+      authenticated: (user) => _buildAuthenticatedScreen(context, ref, user.displayName),
+      unauthenticated: () => const LoginScreen(),
+      error: (_) => const LoginScreen(),
     );
   }
 

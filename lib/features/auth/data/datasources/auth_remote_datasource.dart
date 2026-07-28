@@ -43,11 +43,6 @@ abstract class AuthRemoteDataSource {
   /// Signs out the currently authenticated user from all providers.
   Future<void> signOut();
 
-  /// Returns a stream of [UserModel] reflecting authentication state changes.
-  ///
-  /// Emits `null` when the user signs out.
-  Stream<UserModel?> authStateChanges();
-
   /// Returns the currently authenticated user, or `null` if not signed in.
   UserModel? getCurrentUser();
 }
@@ -171,14 +166,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _firebaseAuth.signOut(),
       GoogleSignIn.instance.signOut(),
     ]);
-  }
-
-  @override
-  Stream<UserModel?> authStateChanges() {
-    return _firebaseAuth.authStateChanges().map((User? user) {
-      if (user == null) return null;
-      return UserModel.fromFirebaseUser(user);
-    });
   }
 
   @override

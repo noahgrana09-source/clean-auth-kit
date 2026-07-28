@@ -371,54 +371,6 @@ final class SignOutUseCaseProvider
 
 String _$signOutUseCaseHash() => r'43b88dc732fc2ec257d73871891f04dcae657f24';
 
-@ProviderFor(watchAuthStateUseCase)
-final watchAuthStateUseCaseProvider = WatchAuthStateUseCaseProvider._();
-
-final class WatchAuthStateUseCaseProvider
-    extends
-        $FunctionalProvider<
-          WatchAuthStateUseCase,
-          WatchAuthStateUseCase,
-          WatchAuthStateUseCase
-        >
-    with $Provider<WatchAuthStateUseCase> {
-  WatchAuthStateUseCaseProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'watchAuthStateUseCaseProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$watchAuthStateUseCaseHash();
-
-  @$internal
-  @override
-  $ProviderElement<WatchAuthStateUseCase> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  WatchAuthStateUseCase create(Ref ref) {
-    return watchAuthStateUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(WatchAuthStateUseCase value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<WatchAuthStateUseCase>(value),
-    );
-  }
-}
-
-String _$watchAuthStateUseCaseHash() =>
-    r'ce45fc80bcbfbc02d8cd563506f6a73d7fbe4cfa';
-
 @ProviderFor(getCurrentUserUseCase)
 final getCurrentUserUseCaseProvider = GetCurrentUserUseCaseProvider._();
 
@@ -466,42 +418,3 @@ final class GetCurrentUserUseCaseProvider
 
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
-
-@ProviderFor(authStateStream)
-final authStateStreamProvider = AuthStateStreamProvider._();
-
-final class AuthStateStreamProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<UserEntity?>,
-          UserEntity?,
-          Stream<UserEntity?>
-        >
-    with $FutureModifier<UserEntity?>, $StreamProvider<UserEntity?> {
-  AuthStateStreamProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'authStateStreamProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$authStateStreamHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<UserEntity?> $createElement(
-    $ProviderPointer pointer,
-  ) => $StreamProviderElement(pointer);
-
-  @override
-  Stream<UserEntity?> create(Ref ref) {
-    return authStateStream(ref);
-  }
-}
-
-String _$authStateStreamHash() => r'4722ed9f4bbd44ee4e71f9e671e0b9e57b3b3077';

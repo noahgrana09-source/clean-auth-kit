@@ -31,16 +31,6 @@ abstract class UseCase<T, Params> {
 }
 
 /// Contrato base para casos de uso que retornan un [Stream].
-///
-/// Usado para operaciones reactivas como observar el estado de autenticación.
-///
-/// Ejemplo:
-/// ```dart
-/// class WatchAuthStateUseCase implements StreamUseCase<UserEntity?, NoParams> {
-///   @override
-///   Stream<UserEntity?> call(NoParams params) => _repository.watchAuthState();
-/// }
-/// ```
 abstract class StreamUseCase<T, Params> {
   /// Retorna un [Stream] del tipo [T] en función de [params].
   Stream<T> call(Params params);

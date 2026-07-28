@@ -237,38 +237,6 @@ void main() {
     });
   });
 
-  group('watchAuthState', () {
-    test('should return stream of UserEntity when user is authenticated', () {
-      when(
-        () => mockDataSource.authStateChanges(),
-      ).thenAnswer((_) => Stream.fromIterable([tUserModel]));
-
-      final stream = repository.watchAuthState();
-
-      expect(stream, emitsInOrder([tUserEntity]));
-    });
-
-    test('should return stream with null when user signs out', () {
-      when(
-        () => mockDataSource.authStateChanges(),
-      ).thenAnswer((_) => Stream.fromIterable([null]));
-
-      final stream = repository.watchAuthState();
-
-      expect(stream, emitsInOrder([null]));
-    });
-
-    test('should map sequence of auth state changes correctly', () {
-      when(
-        () => mockDataSource.authStateChanges(),
-      ).thenAnswer((_) => Stream.fromIterable([tUserModel, null]));
-
-      final stream = repository.watchAuthState();
-
-      expect(stream, emitsInOrder([tUserEntity, null]));
-    });
-  });
-
   group('getCurrentUser', () {
     test('should return UserEntity when user is authenticated', () {
       when(() => mockDataSource.getCurrentUser()).thenReturn(tUserModel);
