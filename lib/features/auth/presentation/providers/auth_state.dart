@@ -25,6 +25,8 @@ abstract class AuthState with _$AuthState {
 
   /// An error occurred during authentication.
   ///
-  /// Contains a [message] describing the error.
-  const factory AuthState.error(String message) = AuthError;
+  /// Contains a [message] describing the error and the originating
+  /// [code], so the UI can distinguish error kinds without parsing text.
+  const factory AuthState.error(String message, {required String code}) =
+      AuthError;
 }

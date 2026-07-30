@@ -30,7 +30,10 @@ void main() {
     });
 
     test('should return ServerFailure when sign out fails', () async {
-      const failure = ServerFailure(message: 'Sign out failed');
+      const failure = ServerFailure(
+        code: 'unknown-error',
+        message: 'Sign out failed',
+      );
       when(
         () => mockRepository.signOut(),
       ).thenAnswer((_) async => const Left(failure));
@@ -43,7 +46,10 @@ void main() {
     });
 
     test('should return NetworkFailure on connectivity issue', () async {
-      const failure = NetworkFailure(message: 'No internet');
+      const failure = NetworkFailure(
+        code: 'network-request-failed',
+        message: 'No internet',
+      );
       when(
         () => mockRepository.signOut(),
       ).thenAnswer((_) async => const Left(failure));

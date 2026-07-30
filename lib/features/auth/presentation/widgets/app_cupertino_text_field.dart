@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 /// El SDK de Flutter tiene ciertas limitaciones con los componentes de Cupertino:
 /// 1. [CupertinoTextField] no implementa [FormField], por lo que no soporta validación nativa (`validator`).
 /// 2. [CupertinoTextFormFieldRow] sí soporta validación, pero no expone la propiedad `suffix` (ej. botón de ver contraseña).
-/// 
-/// Para solucionar esto, este widget utiliza un campo de Material configurado 
+///
+/// Para solucionar esto, este widget utiliza un campo de Material configurado
 /// visualmente para lucir idéntico a un campo moderno de iOS.
 class AppCupertinoTextField extends StatelessWidget {
   final String? hint;
@@ -57,7 +57,10 @@ class AppCupertinoTextField extends StatelessWidget {
         ),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.outline),
@@ -79,11 +82,7 @@ class AppCupertinoTextField extends StatelessWidget {
           borderSide: BorderSide(color: colorScheme.error),
         ),
         prefixIcon: prefixIcon != null
-            ? Icon(
-                prefixIcon,
-                color: colorScheme.onSurfaceVariant,
-                size: 20,
-              )
+            ? Icon(prefixIcon, color: colorScheme.onSurfaceVariant, size: 20)
             : null,
         suffixIcon: suffixIcon,
       ),

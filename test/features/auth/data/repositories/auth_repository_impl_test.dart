@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:product_searcher/core/error/failures.dart';
+import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:product_searcher/features/auth/data/models/user_model.dart';
 import 'package:product_searcher/features/auth/data/repositories/auth_repository_impl.dart';
 
@@ -75,6 +76,47 @@ void main() {
         (_) => fail('Should be Left'),
       );
     });
+
+    test(
+      'should return GoogleSignInFailure with the datasource code on AuthDataSourceException',
+      () async {
+        when(() => mockDataSource.signInWithGoogle()).thenThrow(
+          AuthDataSourceException(
+            code: 'null-user',
+            message: 'Firebase sign-in returned null user',
+          ),
+        );
+
+        final result = await repository.signInWithGoogle();
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<GoogleSignInFailure>());
+          expect(failure.code, 'null-user');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return UserPersistenceFailure when UserPersistenceException is thrown',
+      () async {
+        when(() => mockDataSource.signInWithGoogle()).thenThrow(
+          UserPersistenceException(
+            code: 'permission-denied',
+            message: 'Missing or insufficient permissions',
+          ),
+        );
+
+        final result = await repository.signInWithGoogle();
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<UserPersistenceFailure>());
+          expect(failure.code, 'permission-denied');
+          expect(failure.message, 'Missing or insufficient permissions');
+        }, (_) => fail('Should be Left'));
+      },
+    );
   });
 
   group('signInWithEmailAndPassword', () {
@@ -139,6 +181,34 @@ void main() {
         (_) => fail('Should be Left'),
       );
     });
+
+    test(
+      'should return ServerFailure with the datasource code on AuthDataSourceException',
+      () async {
+        when(
+          () => mockDataSource.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenThrow(
+          AuthDataSourceException(
+            code: 'null-user',
+            message: 'Firebase sign-in returned null user',
+          ),
+        );
+
+        final result = await repository.signInWithEmailAndPassword(
+          email: 'test@example.com',
+          password: 'password123',
+        );
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<ServerFailure>());
+          expect(failure.code, 'null-user');
+        }, (_) => fail('Should be Left'));
+      },
+    );
   });
 
   group('signUpWithEmailAndPassword', () {
@@ -210,6 +280,66 @@ void main() {
         (_) => fail('Should be Left'),
       );
     });
+
+    test(
+      'should return ServerFailure with the datasource code on AuthDataSourceException',
+      () async {
+        when(
+          () => mockDataSource.signUpWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            name: any(named: 'name'),
+          ),
+        ).thenThrow(
+          AuthDataSourceException(
+            code: 'profile-update-failed',
+            message: 'User not found after profile update',
+          ),
+        );
+
+        final result = await repository.signUpWithEmailAndPassword(
+          email: 'test@example.com',
+          password: 'password123',
+          name: 'Test User',
+        );
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<ServerFailure>());
+          expect(failure.code, 'profile-update-failed');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return UserPersistenceFailure when UserPersistenceException is thrown',
+      () async {
+        when(
+          () => mockDataSource.signUpWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            name: any(named: 'name'),
+          ),
+        ).thenThrow(
+          UserPersistenceException(
+            code: 'permission-denied',
+            message: 'Missing or insufficient permissions',
+          ),
+        );
+
+        final result = await repository.signUpWithEmailAndPassword(
+          email: 'test@example.com',
+          password: 'password123',
+          name: 'Test User',
+        );
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<UserPersistenceFailure>());
+          expect(failure.code, 'permission-denied');
+        }, (_) => fail('Should be Left'));
+      },
+    );
   });
 
   group('signOut', () {

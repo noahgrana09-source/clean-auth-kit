@@ -5,13 +5,25 @@ import 'package:product_searcher/features/auth/data/datasources/auth_remote_data
 
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
 class MockFirebaseUser extends Mock implements User {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 
+class MockAdditionalUserInfo extends Mock implements AdditionalUserInfo {}
+
 class MockUserMetadata extends Mock implements UserMetadata {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
+
+// ignore: subtype_of_sealed_class
+class MockCollectionReference extends Mock
+    implements CollectionReference<Map<String, dynamic>> {}
+
+// ignore: subtype_of_sealed_class
+class MockDocumentReference extends Mock
+    implements DocumentReference<Map<String, dynamic>> {}
 
 // ignore: subtype_of_sealed_class
 class MockDocumentSnapshot extends Mock

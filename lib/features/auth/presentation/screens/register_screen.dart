@@ -12,6 +12,7 @@ import '../widgets/adaptive_text_field.dart';
 import '../widgets/auth_error_widget.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/google_sign_in_button.dart';
+import '../widgets/loading_overlay.dart';
 
 /// Pantalla de registro adaptativa y responsiva.
 ///
@@ -142,13 +143,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             onPressed: _navigateToLogin,
           ),
         ),
-        child: SafeArea(child: _buildBody(isLoading, errorMessage)),
+        child: SafeArea(
+          child: LoadingOverlay(
+            isLoading: isLoading,
+            child: _buildBody(isLoading, errorMessage),
+          ),
+        ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Crear cuenta')),
-      body: SafeArea(child: _buildBody(isLoading, errorMessage)),
+      body: SafeArea(
+        child: LoadingOverlay(
+          isLoading: isLoading,
+          child: _buildBody(isLoading, errorMessage),
+        ),
+      ),
     );
   }
 

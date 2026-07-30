@@ -12,7 +12,19 @@ import '../widgets/adaptive_text_field.dart';
 import '../widgets/auth_error_widget.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/google_sign_in_button.dart';
+import '../widgets/loading_overlay.dart';
 import 'register_screen.dart';
+
+/// Firebase Auth error codes that mean "wrong email/password" for the
+/// sign-in-with-email flow. Any other code (network issues, rate
+/// limiting, etc.) is a technical error and should be shown as-is
+/// instead of being relabeled as a credentials mistake.
+const _invalidCredentialCodes = {
+  'invalid-credential',
+  'wrong-password',
+  'user-not-found',
+  'invalid-email',
+};
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -86,11 +98,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen<AuthState>(authProvider, (_, next) {
       if (_attemptedEmailSignIn && next is AuthError) {
         _attemptedEmailSignIn = false;
-        setState(() {
-          _emailError = 'Usuario o contraseña incorrectos';
-          _passwordError = 'Usuario o contraseña incorrectos';
-        });
-        _formKey.currentState?.validate();
+        // Only relabel recognized "wrong credentials" codes. Anything
+        // else (network, too-many-requests, etc.) is a real technical
+        // error and must surface as-is via the banner below, not be
+        // masked as an incorrect user/password.
+        if (_invalidCredentialCodes.contains(next.code)) {
+          setState(() {
+            _emailError = 'Usuario o contraseña incorrectos';
+            _passwordError = 'Usuario o contraseña incorrectos';
+          });
+          _formKey.currentState?.validate();
+        }
       }
     });
 
@@ -103,11 +121,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(
-        child: SafeArea(child: _buildBody(isLoading, bannerError)),
+        child: SafeArea(
+          child: LoadingOverlay(
+            isLoading: isLoading,
+            child: _buildBody(isLoading, bannerError),
+          ),
+        ),
       );
     }
 
-    return Scaffold(body: SafeArea(child: _buildBody(isLoading, bannerError)));
+    return Scaffold(
+      body: SafeArea(
+        child: LoadingOverlay(
+          isLoading: isLoading,
+          child: _buildBody(isLoading, bannerError),
+        ),
+      ),
+    );
   }
 
   Widget _buildBody(bool isLoading, String? errorMessage) {

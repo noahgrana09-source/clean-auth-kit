@@ -11,8 +11,10 @@ import 'login_screen.dart';
 ///
 /// Observa [authProvider] y redirige según el estado:
 /// - [AuthAuthenticated] → pantalla principal (placeholder).
-/// - [AuthUnauthenticated] / [AuthError] → [LoginScreen].
-/// - [AuthInitial] / [AuthLoading] → indicador de carga nativo.
+/// - [AuthUnauthenticated] / [AuthError] / [AuthLoading] → [LoginScreen]
+///   (que muestra su propio indicador de carga superpuesto).
+/// - [AuthInitial] → indicador de carga nativo, antes de saber si hay
+///   una sesión activa.
 class AuthWrapper extends ConsumerWidget {
   const AuthWrapper({super.key});
 
@@ -22,10 +24,15 @@ class AuthWrapper extends ConsumerWidget {
 
     return authState.when(
       initial: _buildLoadingScreen,
-      loading: _buildLoadingScreen,
-      authenticated: (user) => _buildAuthenticatedScreen(context, ref, user.displayName),
+      // Stay on LoginScreen while loading instead of swapping to a
+      // different widget: that would unmount it and lose local state
+      // (attempted-sign-in flag, field errors, text controllers) right
+      // before the result of the attempt arrives.
+      loading: () => const LoginScreen(),
+      authenticated: (user) =>
+          _buildAuthenticatedScreen(context, ref, user.displayName),
       unauthenticated: () => const LoginScreen(),
-      error: (_) => const LoginScreen(),
+      error: (_, _) => const LoginScreen(),
     );
   }
 

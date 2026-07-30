@@ -45,7 +45,7 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AuthState.loading();
     final result = await _signInWithGoogle(const NoParams());
     result.fold(
-      (failure) => state = AuthState.error(failure.message),
+      (failure) => state = AuthState.error(failure.message, code: failure.code),
       (user) => state = AuthState.authenticated(user),
     );
   }
@@ -60,7 +60,7 @@ class AuthNotifier extends _$AuthNotifier {
       SignInWithEmailParams(email: email, password: password),
     );
     result.fold(
-      (failure) => state = AuthState.error(failure.message),
+      (failure) => state = AuthState.error(failure.message, code: failure.code),
       (user) => state = AuthState.authenticated(user),
     );
   }
@@ -76,7 +76,7 @@ class AuthNotifier extends _$AuthNotifier {
       SignUpWithEmailParams(email: email, password: password, name: name),
     );
     result.fold(
-      (failure) => state = AuthState.error(failure.message),
+      (failure) => state = AuthState.error(failure.message, code: failure.code),
       (user) => state = AuthState.authenticated(user),
     );
   }
@@ -90,7 +90,7 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AuthState.loading();
     final result = await _signOut(const NoParams());
     result.fold(
-      (failure) => state = AuthState.error(failure.message),
+      (failure) => state = AuthState.error(failure.message, code: failure.code),
       (_) => state = const AuthState.unauthenticated(),
     );
   }

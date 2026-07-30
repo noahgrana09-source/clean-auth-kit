@@ -27,14 +27,23 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(AuthFailure(code: e.code, message: e.message ?? ''));
     } on GoogleSignInException catch (e) {
       return Left(
-        GoogleSignInFailure(message: 'Error at Google Sign In ${e.code}'),
+        GoogleSignInFailure(
+          code: e.code.name,
+          message: 'Error at Google Sign In ${e.code}',
+        ),
       );
     } on AuthDataSourceException catch (e) {
-      return Left(GoogleSignInFailure(message: e.message));
+      return Left(GoogleSignInFailure(code: e.code, message: e.message));
+    } on UserPersistenceException catch (e) {
+      return Left(UserPersistenceFailure(code: e.code, message: e.message));
     } on FormatException catch (e) {
-      return Left(GoogleSignInFailure(message: e.toString()));
+      return Left(
+        GoogleSignInFailure(code: 'invalid-data', message: e.toString()),
+      );
     } on Exception catch (e) {
-      return Left(GoogleSignInFailure(message: e.toString()));
+      return Left(
+        GoogleSignInFailure(code: 'unknown-error', message: e.toString()),
+      );
     }
   }
 
@@ -51,10 +60,12 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(userModel.toEntity());
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure(code: e.code, message: e.message ?? ''));
+    } on AuthDataSourceException catch (e) {
+      return Left(ServerFailure(code: e.code, message: e.message));
     } on FormatException catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(code: 'invalid-data', message: e.toString()));
     } on Exception catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }
 
@@ -73,10 +84,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(userModel.toEntity());
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure(code: e.code, message: e.message ?? ''));
+    } on AuthDataSourceException catch (e) {
+      return Left(ServerFailure(code: e.code, message: e.message));
+    } on UserPersistenceException catch (e) {
+      return Left(UserPersistenceFailure(code: e.code, message: e.message));
     } on FormatException catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(code: 'invalid-data', message: e.toString()));
     } on Exception catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }
 
@@ -86,7 +101,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.signOut();
       return const Right(unit);
     } on Exception catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }
 

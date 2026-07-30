@@ -40,7 +40,10 @@ void main() {
     });
 
     test('should return GoogleSignInFailure when sign in fails', () async {
-      const failure = GoogleSignInFailure(message: 'Sign in cancelled');
+      const failure = GoogleSignInFailure(
+        code: 'canceled',
+        message: 'Sign in cancelled',
+      );
       when(
         () => mockRepository.signInWithGoogle(),
       ).thenAnswer((_) async => const Left(failure));
@@ -53,7 +56,10 @@ void main() {
     });
 
     test('should return ServerFailure on server error', () async {
-      const failure = ServerFailure(message: 'Server error');
+      const failure = ServerFailure(
+        code: 'unknown-error',
+        message: 'Server error',
+      );
       when(
         () => mockRepository.signInWithGoogle(),
       ).thenAnswer((_) async => const Left(failure));

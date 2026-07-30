@@ -9,11 +9,30 @@ import 'package:product_searcher/features/auth/data/models/user_model.dart';
 /// Firebase Auth and Google Sign-In services.
 
 class AuthDataSourceException implements Exception {
+  /// A stable identifier for the specific invariant that was violated,
+  /// assigned here at the throw site since this is the layer that
+  /// actually knows why it happened.
+  final String code;
   final String message;
-  AuthDataSourceException({required this.message});
+  AuthDataSourceException({required this.code, required this.message});
 
   @override
   String toString() => 'AuthDataSourceException: $message';
+}
+
+/// Thrown when reading or writing the user's profile document fails.
+///
+/// Kept separate from [AuthDataSourceException] so the repository can
+/// tell "the profile persistence step failed" apart from other
+/// datasource-level errors, even though in both cases Firebase Auth
+/// itself already succeeded.
+class UserPersistenceException implements Exception {
+  final String code;
+  final String message;
+  UserPersistenceException({required this.code, required this.message});
+
+  @override
+  String toString() => 'UserPersistenceException: $message';
 }
 
 abstract class AuthRemoteDataSource {
@@ -97,6 +116,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final User? user = userCredential.user;
     if (user == null) {
       throw AuthDataSourceException(
+        code: 'null-user',
         message: 'Firebase sign-in returned null user',
       );
     }
@@ -104,7 +124,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final userModel = UserModel.fromFirebaseUser(user);
 
     // Persist the user document on first Google sign-in
-    await _saveUserToFirestore(userModel);
+    try {
+      await _saveUserToFirestore(userModel);
+    } catch (e) {
+      // Only roll back if this sign-in just created the account: an
+      // existing user must never be deleted over a transient failure
+      // reading/writing its profile.
+      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+        await _deleteUser(user);
+      }
+      rethrow;
+    }
 
     return userModel;
   }
@@ -120,6 +150,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final User? user = userCredential.user;
     if (user == null) {
       throw AuthDataSourceException(
+        code: 'null-user',
         message: 'Firebase sign-in returned null user',
       );
     }
@@ -139,6 +170,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final User? user = userCredential.user;
     if (user == null) {
       throw AuthDataSourceException(
+        code: 'null-user',
         message: 'Firebase sign-up returned null user',
       );
     }
@@ -151,12 +183,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final User? updatedUser = _firebaseAuth.currentUser;
     if (updatedUser == null) {
       throw AuthDataSourceException(
+        code: 'profile-update-failed',
         message: 'User not found after profile update',
       );
     }
 
     final userModel = UserModel.fromFirebaseUser(updatedUser);
-    await _saveUserToFirestore(userModel);
+    try {
+      await _saveUserToFirestore(userModel);
+    } catch (e) {
+      // This account was just created in this same call, so it is
+      // always safe to roll it back: undo the sign-up rather than
+      // leaving an orphaned Firebase Auth account with no profile,
+      // which would block retrying with the same email.
+      await _deleteUser(updatedUser);
+      rethrow;
+    }
     return userModel;
   }
 
@@ -175,13 +217,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return UserModel.fromFirebaseUser(user);
   }
 
+  /// Best-effort rollback: deletes [user] if the account was left
+  /// without a persisted profile. Swallows any secondary failure so
+  /// the original persistence error is what gets surfaced regardless.
+  Future<void> _deleteUser(User user) async {
+    try {
+      await user.delete();
+    } catch (_) {
+      // Ignored: nothing more we can do here.
+    }
+  }
+
   Future<void> _saveUserToFirestore(UserModel model) async {
-    final userDoc = await _firestore.collection('users').doc(model.uid).get();
-    if (!userDoc.exists) {
-      await _firestore
-          .collection('users')
-          .doc(model.uid)
-          .set(model.toFirestore(), SetOptions(merge: false));
+    try {
+      final userDoc = await _firestore.collection('users').doc(model.uid).get();
+      if (!userDoc.exists) {
+        await _firestore
+            .collection('users')
+            .doc(model.uid)
+            .set(model.toFirestore(), SetOptions(merge: false));
+      }
+    } on FirebaseException catch (e) {
+      throw UserPersistenceException(
+        code: e.code,
+        message: e.message ?? 'Failed to persist user profile',
+      );
     }
   }
 }
