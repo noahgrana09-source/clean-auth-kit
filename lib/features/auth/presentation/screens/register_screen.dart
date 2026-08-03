@@ -29,14 +29,29 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  /// Tiempo que se mantiene la pantalla visible tras un registro/login
+  /// exitoso, para que la animación de éxito del [AuthHeader] alcance
+  /// a reproducirse antes de navegar.
+  static const _successCelebrationDelay = Duration(milliseconds: 2000);
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _passwordFocusNode = FocusNode();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isPasswordFocused = false;
   bool _submitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordFocusNode.addListener(() {
+      setState(() => _isPasswordFocused = _passwordFocusNode.hasFocus);
+    });
+  }
 
   @override
   void dispose() {
@@ -44,6 +59,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -127,7 +143,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (_, next) {
       if (next is AuthAuthenticated) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        final navigator = Navigator.of(context);
+        Future.delayed(_successCelebrationDelay, () {
+          if (mounted) navigator.popUntil((route) => route.isFirst);
+        });
       }
     });
 
@@ -192,9 +211,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          const AuthHeader(
+          AuthHeader(
             title: 'Crear cuenta',
             subtitle: 'Regístrate para comenzar',
+            isPasswordActive: _isPasswordFocused,
           ),
           const SizedBox(height: 32),
 
@@ -231,6 +251,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           // Campo contraseña
           AdaptiveTextField(
             controller: _passwordController,
+            focusNode: _passwordFocusNode,
             hint: 'Contraseña',
             obscureText: _obscurePassword,
             textInputAction: TextInputAction.next,

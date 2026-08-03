@@ -42,6 +42,9 @@ class AdaptiveTextField extends StatelessWidget {
   /// Indica si el campo debe solicitar foco automáticamente.
   final bool autofocus;
 
+  /// Nodo de foco opcional, para observar cuándo el campo está activo.
+  final FocusNode? focusNode;
+
   /// Crea un [AdaptiveTextField] adaptativo.
   const AdaptiveTextField({
     super.key,
@@ -55,6 +58,7 @@ class AdaptiveTextField extends StatelessWidget {
     this.textInputAction,
     this.onChanged,
     this.autofocus = false,
+    this.focusNode,
   });
 
   @override
@@ -78,6 +82,7 @@ class AdaptiveTextField extends StatelessWidget {
       validator: validator,
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
+      focusNode: focusNode,
     );
   }
 
@@ -91,6 +96,7 @@ class AdaptiveTextField extends StatelessWidget {
       onChanged: onChanged,
       autofocus: autofocus,
       validator: validator,
+      focusNode: focusNode,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,

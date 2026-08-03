@@ -15,11 +15,47 @@ import 'login_screen.dart';
 ///   (que muestra su propio indicador de carga superpuesto).
 /// - [AuthInitial] → indicador de carga nativo, antes de saber si hay
 ///   una sesión activa.
-class AuthWrapper extends ConsumerWidget {
+class AuthWrapper extends ConsumerStatefulWidget {
   const AuthWrapper({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends ConsumerState<AuthWrapper> {
+  /// Tiempo que se sigue mostrando [LoginScreen] tras un login/registro
+  /// exitoso, para que la animación de éxito del [AuthHeader] alcance a
+  /// reproducirse antes de mostrar la pantalla principal.
+  static const _successCelebrationDelay = Duration(milliseconds: 2000);
+
+  bool _showAuthenticatedScreen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // If the app starts with an already-authenticated session (a
+    // returning user, not a live login just now), skip straight to
+    // the home screen: there is no "just succeeded" transition for
+    // ref.listen to observe in build(), so without this the delayed
+    // flip below would never run and _showAuthenticatedScreen would
+    // stay false forever, stranding the user on LoginScreen.
+    _showAuthenticatedScreen = ref.read(authProvider) is AuthAuthenticated;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next is AuthAuthenticated) {
+        if (previous is! AuthAuthenticated) {
+          Future.delayed(_successCelebrationDelay, () {
+            if (mounted) setState(() => _showAuthenticatedScreen = true);
+          });
+        }
+      } else {
+        _showAuthenticatedScreen = false;
+      }
+    });
+
     final authState = ref.watch(authProvider);
 
     return authState.when(
@@ -29,8 +65,9 @@ class AuthWrapper extends ConsumerWidget {
       // (attempted-sign-in flag, field errors, text controllers) right
       // before the result of the attempt arrives.
       loading: () => const LoginScreen(),
-      authenticated: (user) =>
-          _buildAuthenticatedScreen(context, ref, user.displayName),
+      authenticated: (user) => _showAuthenticatedScreen
+          ? _buildAuthenticatedScreen(context, ref, user.displayName)
+          : const LoginScreen(),
       unauthenticated: () => const LoginScreen(),
       error: (_, _) => const LoginScreen(),
     );

@@ -21,6 +21,7 @@ class AppCupertinoTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
   final bool autofocus;
+  final FocusNode? focusNode;
 
   const AppCupertinoTextField({
     super.key,
@@ -34,6 +35,7 @@ class AppCupertinoTextField extends StatelessWidget {
     this.textInputAction,
     this.onChanged,
     this.autofocus = false,
+    this.focusNode,
   });
 
   @override
@@ -48,6 +50,7 @@ class AppCupertinoTextField extends StatelessWidget {
       onChanged: onChanged,
       autofocus: autofocus,
       validator: validator,
+      focusNode: focusNode,
       style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
       decoration: InputDecoration(
         hintText: hint,

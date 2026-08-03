@@ -60,3 +60,17 @@ SignOutUseCase signOutUseCase(Ref ref) =>
 @riverpod
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
     GetCurrentUserUseCase(ref.watch(authRepositoryProvider));
+
+// ---------------------------------------------------------------------------
+// UI configuration
+// ---------------------------------------------------------------------------
+
+/// Si `true`, las pantallas de auth muestran la ilustración propia (el
+/// candado animado) en vez de la animación de Rive.
+///
+/// Se define en tiempo de compilación. Por defecto es `false` (se usa
+/// Rive); para probar la ilustración propia:
+/// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
+@Riverpod(keepAlive: true)
+bool useAppIllustration(Ref ref) =>
+    const bool.fromEnvironment('USE_APP_ILLUSTRATION', defaultValue: false);

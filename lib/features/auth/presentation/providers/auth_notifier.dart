@@ -44,10 +44,12 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signInWithGoogle() async {
     state = const AuthState.loading();
     final result = await _signInWithGoogle(const NoParams());
-    result.fold(
-      (failure) => state = AuthState.error(failure.message, code: failure.code),
-      (user) => state = AuthState.authenticated(user),
-    );
+    result.fold((failure) {
+      if (failure.code == 'canceled') {
+        state = const AuthState.unauthenticated();
+      }
+      state = AuthState.error(failure.message, code: failure.code);
+    }, (user) => state = AuthState.authenticated(user));
   }
 
   /// Signs in the user with email and password credentials.

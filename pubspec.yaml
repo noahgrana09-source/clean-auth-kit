@@ -37,6 +37,9 @@ dependencies:
   # Firebase Firestore
   cloud_firestore: ^6.1.0
 
+  # Rive animations
+  rive: ^0.14.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -55,3 +58,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/rive/

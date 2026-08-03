@@ -418,3 +418,65 @@ final class GetCurrentUserUseCaseProvider
 
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
+
+/// Si `true`, las pantallas de auth muestran la ilustración propia (el
+/// candado animado) en vez de la animación de Rive.
+///
+/// Se define en tiempo de compilación. Por defecto es `false` (se usa
+/// Rive); para probar la ilustración propia:
+/// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
+
+@ProviderFor(useAppIllustration)
+final useAppIllustrationProvider = UseAppIllustrationProvider._();
+
+/// Si `true`, las pantallas de auth muestran la ilustración propia (el
+/// candado animado) en vez de la animación de Rive.
+///
+/// Se define en tiempo de compilación. Por defecto es `false` (se usa
+/// Rive); para probar la ilustración propia:
+/// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
+
+final class UseAppIllustrationProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Si `true`, las pantallas de auth muestran la ilustración propia (el
+  /// candado animado) en vez de la animación de Rive.
+  ///
+  /// Se define en tiempo de compilación. Por defecto es `false` (se usa
+  /// Rive); para probar la ilustración propia:
+  /// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
+  UseAppIllustrationProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'useAppIllustrationProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$useAppIllustrationHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return useAppIllustration(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$useAppIllustrationHash() =>
+    r'e73ba4f39e7842441f616262747c18024f09d33c';

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rive/rive.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/screens/auth_wrapper.dart';
@@ -15,6 +16,9 @@ Future<void> main() async {
 
   // Inicializa Firebase con las opciones generadas por FlutterFire CLI.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Inicializa el runtime nativo de Rive antes de cargar cualquier .riv.
+  await RiveNative.init();
 
   runApp(
     // ProviderScope es el contenedor raíz de todos los providers Riverpod.
