@@ -97,6 +97,47 @@ final class FirestoreProvider
 
 String _$firestoreHash() => r'864285def6284159b44f9598dcde96347e0c1dce';
 
+@ProviderFor(googleSignIn)
+final googleSignInProvider = GoogleSignInProvider._();
+
+final class GoogleSignInProvider
+    extends $FunctionalProvider<GoogleSignIn, GoogleSignIn, GoogleSignIn>
+    with $Provider<GoogleSignIn> {
+  GoogleSignInProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'googleSignInProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$googleSignInHash();
+
+  @$internal
+  @override
+  $ProviderElement<GoogleSignIn> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GoogleSignIn create(Ref ref) {
+    return googleSignIn(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GoogleSignIn value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GoogleSignIn>(value),
+    );
+  }
+}
+
+String _$googleSignInHash() => r'be6e657edfb1790d127cff1d3820a50c34e65011';
+
 @ProviderFor(authRemoteDataSource)
 final authRemoteDataSourceProvider = AuthRemoteDataSourceProvider._();
 
@@ -143,7 +184,7 @@ final class AuthRemoteDataSourceProvider
 }
 
 String _$authRemoteDataSourceHash() =>
-    r'b285a0742bd055990d1d006c273eb93c11cb795a';
+    r'0910d99d136eb3315b69923faf6dd7e98ab49889';
 
 @ProviderFor(authRepository)
 final authRepositoryProvider = AuthRepositoryProvider._();

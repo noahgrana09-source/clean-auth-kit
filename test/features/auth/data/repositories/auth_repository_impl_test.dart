@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:product_searcher/core/error/failures.dart';
 import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -55,10 +56,26 @@ void main() {
         expect(result.isLeft(), true);
         result.fold((failure) {
           expect(failure, isA<AuthFailure>());
-          expect(
-            (failure as AuthFailure).code,
-            'account-exists-with-different-credential',
-          );
+          expect(failure.code, 'account-exists-with-different-credential');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return GoogleSignInFailure with the Google code on GoogleSignInException',
+      () async {
+        when(() => mockDataSource.signInWithGoogle()).thenThrow(
+          const GoogleSignInException(
+            code: GoogleSignInExceptionCode.interrupted,
+          ),
+        );
+
+        final result = await repository.signInWithGoogle();
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<GoogleSignInFailure>());
+          expect(failure.code, 'interrupted');
         }, (_) => fail('Should be Left'));
       },
     );
@@ -71,17 +88,17 @@ void main() {
       final result = await repository.signInWithGoogle();
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure, isA<GoogleSignInFailure>()),
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<GoogleSignInFailure>());
+        expect(failure.code, 'unknown-error');
+      }, (_) => fail('Should be Left'));
     });
 
     test(
       'should return GoogleSignInFailure with the datasource code on AuthDataSourceException',
       () async {
         when(() => mockDataSource.signInWithGoogle()).thenThrow(
-          AuthDataSourceException(
+          const AuthDataSourceException(
             code: 'null-user',
             message: 'Firebase sign-in returned null user',
           ),
@@ -101,7 +118,7 @@ void main() {
       'should return UserPersistenceFailure when UserPersistenceException is thrown',
       () async {
         when(() => mockDataSource.signInWithGoogle()).thenThrow(
-          UserPersistenceException(
+          const UserPersistenceException(
             code: 'permission-denied',
             message: 'Missing or insufficient permissions',
           ),
@@ -114,6 +131,23 @@ void main() {
           expect(failure, isA<UserPersistenceFailure>());
           expect(failure.code, 'permission-denied');
           expect(failure.message, 'Missing or insufficient permissions');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return GoogleSignInFailure with an invalid-data code on FormatException',
+      () async {
+        when(
+          () => mockDataSource.signInWithGoogle(),
+        ).thenThrow(const FormatException('Email not found'));
+
+        final result = await repository.signInWithGoogle();
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<GoogleSignInFailure>());
+          expect(failure.code, 'invalid-data');
         }, (_) => fail('Should be Left'));
       },
     );
@@ -158,7 +192,7 @@ void main() {
       expect(result.isLeft(), true);
       result.fold((failure) {
         expect(failure, isA<AuthFailure>());
-        expect((failure as AuthFailure).code, 'wrong-password');
+        expect(failure.code, 'wrong-password');
       }, (_) => fail('Should be Left'));
     });
 
@@ -176,10 +210,10 @@ void main() {
       );
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure, isA<ServerFailure>()),
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<ServerFailure>());
+        expect(failure.code, 'unknown-error');
+      }, (_) => fail('Should be Left'));
     });
 
     test(
@@ -191,7 +225,7 @@ void main() {
             password: any(named: 'password'),
           ),
         ).thenThrow(
-          AuthDataSourceException(
+          const AuthDataSourceException(
             code: 'null-user',
             message: 'Firebase sign-in returned null user',
           ),
@@ -206,6 +240,29 @@ void main() {
         result.fold((failure) {
           expect(failure, isA<ServerFailure>());
           expect(failure.code, 'null-user');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return ServerFailure with an invalid-data code on FormatException',
+      () async {
+        when(
+          () => mockDataSource.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenThrow(const FormatException('Email not found'));
+
+        final result = await repository.signInWithEmailAndPassword(
+          email: 'test@example.com',
+          password: 'password123',
+        );
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<ServerFailure>());
+          expect(failure.code, 'invalid-data');
         }, (_) => fail('Should be Left'));
       },
     );
@@ -255,7 +312,7 @@ void main() {
       expect(result.isLeft(), true);
       result.fold((failure) {
         expect(failure, isA<AuthFailure>());
-        expect((failure as AuthFailure).code, 'email-already-in-use');
+        expect(failure.code, 'email-already-in-use');
       }, (_) => fail('Should be Left'));
     });
 
@@ -275,10 +332,10 @@ void main() {
       );
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure, isA<ServerFailure>()),
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<ServerFailure>());
+        expect(failure.code, 'unknown-error');
+      }, (_) => fail('Should be Left'));
     });
 
     test(
@@ -291,7 +348,7 @@ void main() {
             name: any(named: 'name'),
           ),
         ).thenThrow(
-          AuthDataSourceException(
+          const AuthDataSourceException(
             code: 'profile-update-failed',
             message: 'User not found after profile update',
           ),
@@ -321,7 +378,7 @@ void main() {
             name: any(named: 'name'),
           ),
         ).thenThrow(
-          UserPersistenceException(
+          const UserPersistenceException(
             code: 'permission-denied',
             message: 'Missing or insufficient permissions',
           ),
@@ -337,6 +394,31 @@ void main() {
         result.fold((failure) {
           expect(failure, isA<UserPersistenceFailure>());
           expect(failure.code, 'permission-denied');
+        }, (_) => fail('Should be Left'));
+      },
+    );
+
+    test(
+      'should return ServerFailure with an invalid-data code on FormatException',
+      () async {
+        when(
+          () => mockDataSource.signUpWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            name: any(named: 'name'),
+          ),
+        ).thenThrow(const FormatException('Email not found'));
+
+        final result = await repository.signUpWithEmailAndPassword(
+          email: 'test@example.com',
+          password: 'password123',
+          name: 'Test User',
+        );
+
+        expect(result.isLeft(), true);
+        result.fold((failure) {
+          expect(failure, isA<ServerFailure>());
+          expect(failure.code, 'invalid-data');
         }, (_) => fail('Should be Left'));
       },
     );
@@ -360,10 +442,10 @@ void main() {
       final result = await repository.signOut();
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure, isA<ServerFailure>()),
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<ServerFailure>());
+        expect(failure.code, 'unknown-error');
+      }, (_) => fail('Should be Left'));
     });
   });
 

@@ -29,7 +29,7 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return ServerFailure when sign out fails', () async {
+    test('should return the Failure from the repository unchanged', () async {
       const failure = ServerFailure(
         code: 'unknown-error',
         message: 'Sign out failed',
@@ -43,21 +43,6 @@ void main() {
       expect(result, const Left(failure));
       verify(() => mockRepository.signOut()).called(1);
       verifyNoMoreInteractions(mockRepository);
-    });
-
-    test('should return NetworkFailure on connectivity issue', () async {
-      const failure = NetworkFailure(
-        code: 'network-request-failed',
-        message: 'No internet',
-      );
-      when(
-        () => mockRepository.signOut(),
-      ).thenAnswer((_) async => const Left(failure));
-
-      final result = await useCase(const NoParams());
-
-      expect(result, const Left(failure));
-      verify(() => mockRepository.signOut()).called(1);
     });
   });
 }

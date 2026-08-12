@@ -53,7 +53,7 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return AuthFailure when email is already in use', () async {
+    test('should return the Failure from the repository unchanged', () async {
       const failure = AuthFailure(
         code: 'email-already-in-use',
         message: 'Email already in use',
@@ -76,24 +76,6 @@ void main() {
           name: 'New User',
         ),
       ).called(1);
-    });
-
-    test('should return AuthFailure when password is too weak', () async {
-      const failure = AuthFailure(
-        code: 'weak-password',
-        message: 'Password is too weak',
-      );
-      when(
-        () => mockRepository.signUpWithEmailAndPassword(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-          name: any(named: 'name'),
-        ),
-      ).thenAnswer((_) async => const Left(failure));
-
-      final result = await useCase(tParams);
-
-      expect(result, const Left(failure));
     });
   });
 

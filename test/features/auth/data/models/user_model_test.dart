@@ -20,9 +20,15 @@ void main() {
 
   group('UserModel', () {
     group('fromFirebaseUser', () {
+      late MockFirebaseUser mockUser;
+      late MockUserMetadata mockMetadata;
+
+      setUp(() {
+        mockUser = MockFirebaseUser();
+        mockMetadata = MockUserMetadata();
+      });
+
       test('should create UserModel from Firebase User with all fields', () {
-        final mockUser = MockFirebaseUser();
-        final mockMetadata = MockUserMetadata();
         when(() => mockUser.uid).thenReturn('123');
         when(() => mockUser.email).thenReturn('test@example.com');
         when(() => mockUser.displayName).thenReturn('Test User');
@@ -42,8 +48,6 @@ void main() {
       });
 
       test('should handle null optional fields from Firebase User', () {
-        final mockUser = MockFirebaseUser();
-        final mockMetadata = MockUserMetadata();
         when(() => mockUser.uid).thenReturn('456');
         when(() => mockUser.email).thenReturn('user@example.com');
         when(() => mockUser.displayName).thenReturn(null);
@@ -62,8 +66,6 @@ void main() {
       });
 
       test('should throw FormatException when Firebase email is null', () {
-        final mockUser = MockFirebaseUser();
-        final mockMetadata = MockUserMetadata();
         when(() => mockUser.uid).thenReturn('789');
         when(() => mockUser.email).thenReturn(null);
         when(() => mockUser.displayName).thenReturn(null);
@@ -81,8 +83,6 @@ void main() {
       test(
         'should throw FormatException when Firebase creationTime is null',
         () {
-          final mockUser = MockFirebaseUser();
-          final mockMetadata = MockUserMetadata();
           when(() => mockUser.uid).thenReturn('999');
           when(() => mockUser.email).thenReturn('user@example.com');
           when(() => mockUser.displayName).thenReturn(null);
@@ -100,8 +100,13 @@ void main() {
     });
 
     group('fromFirestore', () {
+      late MockDocumentSnapshot mockDoc;
+
+      setUp(() {
+        mockDoc = MockDocumentSnapshot();
+      });
+
       test('should create UserModel from Firestore DocumentSnapshot', () {
-        final mockDoc = MockDocumentSnapshot();
         when(() => mockDoc.id).thenReturn('123');
         when(() => mockDoc.data()).thenReturn({
           'email': 'test@example.com',
@@ -122,7 +127,6 @@ void main() {
       });
 
       test('should handle null optional fields from Firestore', () {
-        final mockDoc = MockDocumentSnapshot();
         when(() => mockDoc.id).thenReturn('456');
         when(() => mockDoc.data()).thenReturn({
           'email': 'user@example.com',
@@ -221,7 +225,7 @@ void main() {
           displayName: 'Test User',
           createdAt: tCreatedAt,
         );
-        expect(model1, equals(model2));
+        expect(model1, model2);
       });
 
       test('should not be equal when fields differ', () {
@@ -235,7 +239,7 @@ void main() {
           email: 'test@example.com',
           createdAt: tCreatedAt,
         );
-        expect(model1, isNot(equals(model2)));
+        expect(model1, isNot(model2));
       });
     });
   });

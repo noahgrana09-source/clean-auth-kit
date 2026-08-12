@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:product_searcher/features/auth/data/repositories/auth_repository_impl.dart';
@@ -23,9 +24,13 @@ FirebaseAuth firebaseAuth(Ref ref) => FirebaseAuth.instance;
 FirebaseFirestore firestore(Ref ref) => FirebaseFirestore.instance;
 
 @Riverpod(keepAlive: true)
+GoogleSignIn googleSignIn(Ref ref) => GoogleSignIn.instance;
+
+@Riverpod(keepAlive: true)
 AuthRemoteDataSource authRemoteDataSource(Ref ref) => AuthRemoteDataSourceImpl(
   firebaseAuth: ref.watch(firebaseAuthProvider),
   firestore: ref.watch(firestoreProvider),
+  googleSignIn: ref.watch(googleSignInProvider),
 );
 
 // ---------------------------------------------------------------------------

@@ -39,7 +39,7 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return GoogleSignInFailure when sign in fails', () async {
+    test('should return the Failure from the repository unchanged', () async {
       const failure = GoogleSignInFailure(
         code: 'canceled',
         message: 'Sign in cancelled',
@@ -53,21 +53,6 @@ void main() {
       expect(result, const Left(failure));
       verify(() => mockRepository.signInWithGoogle()).called(1);
       verifyNoMoreInteractions(mockRepository);
-    });
-
-    test('should return ServerFailure on server error', () async {
-      const failure = ServerFailure(
-        code: 'unknown-error',
-        message: 'Server error',
-      );
-      when(
-        () => mockRepository.signInWithGoogle(),
-      ).thenAnswer((_) async => const Left(failure));
-
-      final result = await useCase(const NoParams());
-
-      expect(result, const Left(failure));
-      verify(() => mockRepository.signInWithGoogle()).called(1);
     });
   });
 }

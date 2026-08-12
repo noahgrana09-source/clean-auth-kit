@@ -9,6 +9,7 @@ import '../auth_data_mocks.dart';
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
   late MockFirebaseFirestore mockFirestore;
+  late MockGoogleSignIn mockGoogleSignIn;
   late MockCollectionReference mockCollection;
   late MockDocumentReference mockDocRef;
   late MockDocumentSnapshot mockSnapshot;
@@ -16,24 +17,33 @@ void main() {
   late MockFirebaseUser mockUser;
   late MockUserMetadata mockMetadata;
   late AuthRemoteDataSourceImpl dataSource;
+  late MockGoogleSignInAccount mockGoogleSignInAccount;
+  late MockGoogleSignInAuthentication mockGoogleSignInAuthentication;
 
   setUpAll(() {
     registerFallbackValue(SetOptions(merge: false));
+    registerFallbackValue(
+      GoogleAuthProvider.credential(idToken: 'fallback-token'),
+    );
   });
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockFirestore = MockFirebaseFirestore();
+    mockGoogleSignIn = MockGoogleSignIn();
     mockCollection = MockCollectionReference();
     mockDocRef = MockDocumentReference();
     mockSnapshot = MockDocumentSnapshot();
     mockUserCredential = MockUserCredential();
     mockUser = MockFirebaseUser();
     mockMetadata = MockUserMetadata();
+    mockGoogleSignInAccount = MockGoogleSignInAccount();
+    mockGoogleSignInAuthentication = MockGoogleSignInAuthentication();
 
     dataSource = AuthRemoteDataSourceImpl(
       firebaseAuth: mockFirebaseAuth,
       firestore: mockFirestore,
+      googleSignIn: mockGoogleSignIn,
     );
 
     when(() => mockFirestore.collection('users')).thenReturn(mockCollection);
@@ -87,7 +97,9 @@ void main() {
       'deletes the just-created user and rethrows when persisting the profile fails',
       () async {
         stubSuccessfulAccountCreation();
-        when(() => mockDocRef.get()).thenThrow(
+        when(() => mockDocRef.get()).thenAnswer((_) async => mockSnapshot);
+        when(() => mockSnapshot.exists).thenReturn(false);
+        when(() => mockDocRef.set(any(), any())).thenThrow(
           FirebaseException(
             plugin: 'cloud_firestore',
             code: 'permission-denied',
@@ -118,7 +130,9 @@ void main() {
       'still surfaces the original persistence error even if the rollback delete itself fails',
       () async {
         stubSuccessfulAccountCreation();
-        when(() => mockDocRef.get()).thenThrow(
+        when(() => mockDocRef.get()).thenAnswer((_) async => mockSnapshot);
+        when(() => mockSnapshot.exists).thenReturn(false);
+        when(() => mockDocRef.set(any(), any())).thenThrow(
           FirebaseException(
             plugin: 'cloud_firestore',
             code: 'permission-denied',
@@ -211,6 +225,57 @@ void main() {
             ),
           ),
         );
+      },
+    );
+  });
+
+  group('signInWithGoogle', () {
+    setUp(() {
+      when(() => mockGoogleSignIn.initialize()).thenAnswer((_) async {});
+      when(
+        () => mockGoogleSignIn.authenticate(),
+      ).thenAnswer((_) async => mockGoogleSignInAccount);
+      when(
+        () => mockGoogleSignInAccount.authentication,
+      ).thenReturn(mockGoogleSignInAuthentication);
+      when(() => mockGoogleSignInAuthentication.idToken).thenReturn("idToken");
+      when(
+        () => mockFirebaseAuth.signInWithCredential(any()),
+      ).thenAnswer((_) async => mockUserCredential);
+      // signInWithGoogle also calls _saveUserToFirestore internally.
+      when(() => mockDocRef.get()).thenAnswer((_) async => mockSnapshot);
+      when(() => mockSnapshot.exists).thenReturn(false);
+      when(() => mockDocRef.set(any(), any())).thenAnswer((_) async {});
+    });
+    test('returns UserModel when sign-in with google succedes', () async {
+      final result = await dataSource.signInWithGoogle();
+
+      expect(result.uid, 'uid-123');
+      verify(() => mockGoogleSignIn.initialize()).called(1);
+      verify(() => mockGoogleSignIn.authenticate()).called(1);
+      verify(() => mockFirebaseAuth.signInWithCredential(any())).called(1);
+      verify(() => mockDocRef.set(any(), any())).called(1);
+      verifyNever(() => mockUser.delete());
+    });
+
+    test(
+      'throws AuthDataSourceException with a null-user code when the credential has no user',
+      () async {
+        when(() => mockUserCredential.user).thenReturn(null);
+        await expectLater(
+          () => dataSource.signInWithGoogle(),
+          throwsA(
+            isA<AuthDataSourceException>().having(
+              (e) => e.code,
+              'code',
+              'null-user',
+            ),
+          ),
+        );
+        verify(() => mockFirebaseAuth.signInWithCredential(any())).called(1);
+        verifyNever(() => mockDocRef.get());
+        verifyNever(() => mockDocRef.set(any(), any()));
+        verifyNever(() => mockUser.delete());
       },
     );
   });

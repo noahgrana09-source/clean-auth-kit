@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
 
@@ -14,6 +15,13 @@ class MockUserCredential extends Mock implements UserCredential {}
 class MockAdditionalUserInfo extends Mock implements AdditionalUserInfo {}
 
 class MockUserMetadata extends Mock implements UserMetadata {}
+
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+
+class MockGoogleSignInAuthentication extends Mock
+    implements GoogleSignInAuthentication {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 

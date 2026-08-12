@@ -14,7 +14,7 @@ class AuthDataSourceException implements Exception {
   /// actually knows why it happened.
   final String code;
   final String message;
-  AuthDataSourceException({required this.code, required this.message});
+  const AuthDataSourceException({required this.code, required this.message});
 
   @override
   String toString() => 'AuthDataSourceException: $message';
@@ -29,7 +29,7 @@ class AuthDataSourceException implements Exception {
 class UserPersistenceException implements Exception {
   final String code;
   final String message;
-  UserPersistenceException({required this.code, required this.message});
+  const UserPersistenceException({required this.code, required this.message});
 
   @override
   String toString() => 'UserPersistenceException: $message';
@@ -79,22 +79,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// The Firestore instance for persisting user data.
   final FirebaseFirestore _firestore;
 
+  /// The Google Sign-In instance.
+  final GoogleSignIn _googleSignIn;
+
   AuthRemoteDataSourceImpl({
     required FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
+    required GoogleSignIn googleSignIn,
   }) : _firebaseAuth = firebaseAuth,
-       _firestore = firestore;
+       _firestore = firestore,
+       _googleSignIn = googleSignIn;
 
   @override
   Future<UserModel> signInWithGoogle() async {
     // Initialize Google Sign-In (required before any usage in 7.2.0)
-    await GoogleSignIn.instance.initialize();
+    await _googleSignIn.initialize();
 
     // Start the Google Sign-In flow using authenticate() (NOT signIn())
     // In 7.2.0, authenticate() returns GoogleSignInAccount directly
     // and throws GoogleSignInException on failure/cancellation.
-    final GoogleSignInAccount googleUser = await GoogleSignIn.instance
-        .authenticate();
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
 
     // Obtain auth tokens from the Google account.
     // In 7.2.0, authentication is a synchronous getter returning
@@ -115,7 +119,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw AuthDataSourceException(
+      throw const AuthDataSourceException(
         code: 'null-user',
         message: 'Firebase sign-in returned null user',
       );
@@ -149,7 +153,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw AuthDataSourceException(
+      throw const AuthDataSourceException(
         code: 'null-user',
         message: 'Firebase sign-in returned null user',
       );
@@ -169,7 +173,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final User? user = userCredential.user;
     if (user == null) {
-      throw AuthDataSourceException(
+      throw const AuthDataSourceException(
         code: 'null-user',
         message: 'Firebase sign-up returned null user',
       );
@@ -182,7 +186,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     // Get the updated user with the display name
     final User? updatedUser = _firebaseAuth.currentUser;
     if (updatedUser == null) {
-      throw AuthDataSourceException(
+      throw const AuthDataSourceException(
         code: 'profile-update-failed',
         message: 'User not found after profile update',
       );
@@ -204,10 +208,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() async {
-    await Future.wait([
-      _firebaseAuth.signOut(),
-      GoogleSignIn.instance.signOut(),
-    ]);
+    await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
   }
 
   @override

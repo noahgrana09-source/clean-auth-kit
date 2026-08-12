@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:product_searcher/core/error/failures.dart';
 import 'package:product_searcher/core/usecases/usecase.dart';
 import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
@@ -27,7 +28,7 @@ class SignUpWithEmailUseCase
 }
 
 /// Parameters required for signing up with email, password, and name.
-class SignUpWithEmailParams {
+class SignUpWithEmailParams extends Equatable {
   /// The user's email address.
   final String email;
 
@@ -45,13 +46,5 @@ class SignUpWithEmailParams {
   });
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SignUpWithEmailParams &&
-          email == other.email &&
-          password == other.password &&
-          name == other.name;
-
-  @override
-  int get hashCode => Object.hash(email, password, name);
+  List<Object?> get props => [email, password, name];
 }

@@ -50,7 +50,7 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return AuthFailure when credentials are invalid', () async {
+    test('should return the Failure from the repository unchanged', () async {
       const failure = AuthFailure(
         code: 'wrong-password',
         message: 'Wrong password',
@@ -71,23 +71,6 @@ void main() {
           password: 'password123',
         ),
       ).called(1);
-    });
-
-    test('should return AuthFailure when user not found', () async {
-      const failure = AuthFailure(
-        code: 'user-not-found',
-        message: 'User not found',
-      );
-      when(
-        () => mockRepository.signInWithEmailAndPassword(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-        ),
-      ).thenAnswer((_) async => const Left(failure));
-
-      final result = await useCase(tParams);
-
-      expect(result, const Left(failure));
     });
   });
 
