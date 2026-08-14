@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:clean_auth_kit/features/auth/data/datasources/auth_remote_datasource.dart';
 
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 

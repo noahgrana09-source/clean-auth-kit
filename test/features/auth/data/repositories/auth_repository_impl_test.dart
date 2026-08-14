@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/core/error/failures.dart';
-import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:product_searcher/features/auth/data/models/user_model.dart';
-import 'package:product_searcher/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:clean_auth_kit/core/error/failures.dart';
+import 'package:clean_auth_kit/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:clean_auth_kit/features/auth/data/models/user_model.dart';
+import 'package:clean_auth_kit/features/auth/data/repositories/auth_repository_impl.dart';
 
 import '../auth_data_mocks.dart';
 

@@ -1,5 +1,5 @@
-name: product_searcher
-description: "A new Flutter project."
+name: clean_auth_kit
+description: "A Clean Architecture Flutter authentication feature — email/password and Google Sign-In on Firebase."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -14,10 +14,10 @@ dependencies:
   firebase_core: ^4.6.0
   firebase_auth: ^6.3.0
 
-  # Google Sign-In (v7.2.0 - nuevo modelo reactivo con GoogleSignIn.instance)
+  # Google Sign-In (v7.2.0 - new reactive model with GoogleSignIn.instance)
   google_sign_in: 7.2.0
 
-  # SVG rendering (usado para el logo oficial de Google en el botón)
+  # SVG rendering (used for the official Google logo on the button)
   flutter_svg: ^2.0.10+1
 
   # State management
@@ -30,7 +30,7 @@ dependencies:
   # Value equality
   equatable: ^2.0.7
 
-  # Código inmutable / serialización
+  # Immutable code / serialization
   freezed_annotation: ^3.1.0
   json_annotation: ^4.11.0
 
@@ -39,6 +39,11 @@ dependencies:
 
   # Rive animations
   rive: ^0.14.10
+
+  # Localization (English/Spanish)
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -58,5 +63,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/rive/

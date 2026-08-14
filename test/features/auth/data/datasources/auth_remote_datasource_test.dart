@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:clean_auth_kit/features/auth/data/datasources/auth_remote_datasource.dart';
 
 import '../auth_data_mocks.dart';
 

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:product_searcher/features/auth/data/models/user_model.dart';
+import 'package:clean_auth_kit/features/auth/data/models/user_model.dart';
 
 /// Abstract interface for the authentication remote data source.
 ///
@@ -113,7 +113,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       idToken: googleAuth.idToken,
     );
 
-    // Sign in to Firebase with the Google credential
     final UserCredential userCredential = await _firebaseAuth
         .signInWithCredential(credential);
 
@@ -127,7 +126,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final userModel = UserModel.fromFirebaseUser(user);
 
-    // Persist the user document on first Google sign-in
     try {
       await _saveUserToFirestore(userModel);
     } catch (e) {
@@ -179,11 +177,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     }
 
-    // Update the display name after account creation
     await user.updateDisplayName(name);
     await user.reload();
 
-    // Get the updated user with the display name
     final User? updatedUser = _firebaseAuth.currentUser;
     if (updatedUser == null) {
       throw const AuthDataSourceException(

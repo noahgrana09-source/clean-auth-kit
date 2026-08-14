@@ -1,0 +1,168 @@
+{
+  "@@locale": "en",
+
+  "emailRequired": "Email is required",
+  "@emailRequired": {
+    "description": "Validation error when the email field is empty"
+  },
+
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Validation error when the password field is empty"
+  },
+
+  "emailHint": "Email",
+  "@emailHint": {
+    "description": "Placeholder for the email text field"
+  },
+
+  "passwordHint": "Password",
+  "@passwordHint": {
+    "description": "Placeholder for the password text field"
+  },
+
+  "orDivider": "or",
+  "@orDivider": {
+    "description": "Divider label between the email form and the Google sign-in button"
+  },
+
+  "signIn": "Sign in",
+  "@signIn": {
+    "description": "Sign-in submit button, and the login link on the register screen"
+  },
+
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": {
+    "description": "Default label for the Google sign-in button"
+  },
+
+  "loginWelcomeTitle": "Welcome",
+  "@loginWelcomeTitle": {
+    "description": "Login screen header title"
+  },
+
+  "loginWelcomeSubtitle": "Sign in to continue",
+  "@loginWelcomeSubtitle": {
+    "description": "Login screen header subtitle"
+  },
+
+  "invalidCredentials": "Incorrect email or password",
+  "@invalidCredentials": {
+    "description": "Shown on the email/password fields when sign-in fails with a recognized bad-credentials code"
+  },
+
+  "signInWithGoogle": "Sign in with Google",
+  "@signInWithGoogle": {
+    "description": "Google button label on the login screen"
+  },
+
+  "noAccountPrompt": "Don't have an account? ",
+  "@noAccountPrompt": {
+    "description": "Prompt before the register link on the login screen"
+  },
+
+  "registerLink": "Sign up",
+  "@registerLink": {
+    "description": "Link to the register screen"
+  },
+
+  "createAccountTitle": "Create account",
+  "@createAccountTitle": {
+    "description": "Register screen title (nav bar, header, and submit button)"
+  },
+
+  "registerSubtitle": "Sign up to get started",
+  "@registerSubtitle": {
+    "description": "Register screen header subtitle"
+  },
+
+  "nameRequired": "Name is required",
+  "@nameRequired": {
+    "description": "Validation error when the name field is empty"
+  },
+
+  "invalidEmail": "Enter a valid email address",
+  "@invalidEmail": {
+    "description": "Validation error when the email field doesn't match a basic email pattern"
+  },
+
+  "passwordTooShort": "Minimum 8 characters",
+  "@passwordTooShort": {
+    "description": "Validation error when the password is under 8 characters"
+  },
+
+  "passwordNeedsUppercase": "Must contain at least one uppercase letter",
+  "@passwordNeedsUppercase": {
+    "description": "Validation error when the password has no uppercase letter"
+  },
+
+  "passwordNeedsNumber": "Must contain at least one digit",
+  "@passwordNeedsNumber": {
+    "description": "Validation error when the password has no digit"
+  },
+
+  "passwordNeedsSpecialChar": "Must contain at least one special character",
+  "@passwordNeedsSpecialChar": {
+    "description": "Validation error when the password has no special character"
+  },
+
+  "confirmPasswordRequired": "Confirm your password",
+  "@confirmPasswordRequired": {
+    "description": "Validation error when the confirm-password field is empty"
+  },
+
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Validation error when password and confirm-password differ"
+  },
+
+  "nameHint": "Full name",
+  "@nameHint": {
+    "description": "Placeholder for the name text field"
+  },
+
+  "confirmPasswordHint": "Confirm password",
+  "@confirmPasswordHint": {
+    "description": "Placeholder for the confirm-password text field"
+  },
+
+  "signUpWithGoogle": "Sign up with Google",
+  "@signUpWithGoogle": {
+    "description": "Google button label on the register screen"
+  },
+
+  "haveAccountPrompt": "Already have an account? ",
+  "@haveAccountPrompt": {
+    "description": "Prompt before the login link on the register screen"
+  },
+
+  "homeTitle": "Home",
+  "@homeTitle": {
+    "description": "Title of the placeholder authenticated screen"
+  },
+
+  "welcomeUser": "Welcome, {name}",
+  "@welcomeUser": {
+    "description": "Greeting on the placeholder authenticated screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "defaultUserName": "user",
+  "@defaultUserName": {
+    "description": "Fallback name used in the welcome greeting when the user has no display name"
+  },
+
+  "signOut": "Sign out",
+  "@signOut": {
+    "description": "Sign-out button on the placeholder authenticated screen"
+  },
+
+  "animationLoadError": "Couldn't load the animation",
+  "@animationLoadError": {
+    "description": "Shown in place of the Rive illustration if the .riv file fails to load"
+  }
+}

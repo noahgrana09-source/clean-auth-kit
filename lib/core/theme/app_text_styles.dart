@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Estilos de texto de la aplicación.
+/// Application text styles.
 ///
-/// Basados en la escala tipográfica de Material 3.
-/// Todos los estilos están disponibles para light y dark
-/// a través de [ThemeData.textTheme].
+/// Based on the Material 3 type scale.
+/// All styles are available for light and dark
+/// through [ThemeData.textTheme].
 abstract final class AppTextStyles {
   // ── Display ──────────────────────────────────────────────────────────────
 
-  /// Texto muy grande para títulos de pantalla completa.
+  /// Very large text for full-screen titles.
   static const TextStyle displayLarge = TextStyle(
     fontSize: 57,
     fontWeight: FontWeight.w400,
@@ -18,7 +18,7 @@ abstract final class AppTextStyles {
     height: 1.12,
   );
 
-  /// Texto grande para cabeceras principales.
+  /// Large text for main headers.
   static const TextStyle displayMedium = TextStyle(
     fontSize: 45,
     fontWeight: FontWeight.w400,
@@ -28,7 +28,7 @@ abstract final class AppTextStyles {
 
   // ── Headline ─────────────────────────────────────────────────────────────
 
-  /// Titular principal.
+  /// Main headline.
   static const TextStyle headlineLarge = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w700,
@@ -36,7 +36,7 @@ abstract final class AppTextStyles {
     height: 1.25,
   );
 
-  /// Titular mediano (subtítulos de sección).
+  /// Medium headline (section subtitles).
   static const TextStyle headlineMedium = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w600,
@@ -44,7 +44,7 @@ abstract final class AppTextStyles {
     height: 1.29,
   );
 
-  /// Titular pequeño.
+  /// Small headline.
   static const TextStyle headlineSmall = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w600,
@@ -54,7 +54,7 @@ abstract final class AppTextStyles {
 
   // ── Title ────────────────────────────────────────────────────────────────
 
-  /// Título de componente grande (AppBar, Card header).
+  /// Large component title (AppBar, card header).
   static const TextStyle titleLarge = TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w600,
@@ -62,7 +62,7 @@ abstract final class AppTextStyles {
     height: 1.27,
   );
 
-  /// Título de componente mediano.
+  /// Medium component title.
   static const TextStyle titleMedium = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -70,7 +70,7 @@ abstract final class AppTextStyles {
     height: 1.50,
   );
 
-  /// Título de componente pequeño.
+  /// Small component title.
   static const TextStyle titleSmall = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ abstract final class AppTextStyles {
 
   // ── Body ─────────────────────────────────────────────────────────────────
 
-  /// Texto de cuerpo principal.
+  /// Main body text.
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -88,7 +88,7 @@ abstract final class AppTextStyles {
     height: 1.50,
   );
 
-  /// Texto de cuerpo secundario.
+  /// Secondary body text.
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -96,7 +96,7 @@ abstract final class AppTextStyles {
     height: 1.43,
   );
 
-  /// Texto de cuerpo pequeño (captions, hints).
+  /// Small body text (captions, hints).
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
@@ -106,7 +106,7 @@ abstract final class AppTextStyles {
 
   // ── Label ────────────────────────────────────────────────────────────────
 
-  /// Etiqueta grande (botones).
+  /// Large label (buttons).
   static const TextStyle labelLarge = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ abstract final class AppTextStyles {
     height: 1.43,
   );
 
-  /// Etiqueta mediana (chips, tabs).
+  /// Medium label (chips, tabs).
   static const TextStyle labelMedium = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w600,
@@ -122,7 +122,7 @@ abstract final class AppTextStyles {
     height: 1.33,
   );
 
-  /// Etiqueta pequeña (badges, overlines).
+  /// Small label (badges, overlines).
   static const TextStyle labelSmall = TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w500,
@@ -132,7 +132,7 @@ abstract final class AppTextStyles {
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
-  /// Construye un [TextTheme] para el tema claro.
+  /// Builds a [TextTheme] for the light theme.
   static TextTheme get lightTextTheme => TextTheme(
     displayLarge: displayLarge.copyWith(color: AppColorsLight.textPrimary),
     displayMedium: displayMedium.copyWith(color: AppColorsLight.textPrimary),
@@ -150,7 +150,7 @@ abstract final class AppTextStyles {
     labelSmall: labelSmall.copyWith(color: AppColorsLight.textDisabled),
   );
 
-  /// Construye un [TextTheme] para el tema oscuro.
+  /// Builds a [TextTheme] for the dark theme.
   static TextTheme get darkTextTheme => TextTheme(
     displayLarge: displayLarge.copyWith(color: AppColorsDark.textPrimary),
     displayMedium: displayMedium.copyWith(color: AppColorsDark.textPrimary),

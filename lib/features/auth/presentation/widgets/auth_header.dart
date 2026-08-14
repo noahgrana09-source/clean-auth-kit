@@ -6,11 +6,11 @@ import '../providers/auth_providers.dart';
 import 'auth_illustration.dart';
 import 'rive_auth_illustration.dart';
 
-/// Header reutilizable para las pantallas de autenticación.
+/// Reusable header for the authentication screens.
 ///
-/// Muestra la ilustración animada de auth, un título principal
-/// y un subtítulo descriptivo. Qué ilustración se usa (la propia o la
-/// de Rive) lo decide [useAppIllustrationProvider].
+/// Shows the animated auth illustration, a main title, and a
+/// descriptive subtitle. Which illustration is used (the app's own
+/// or Rive's) is decided by [useAppIllustrationProvider].
 class AuthHeader extends ConsumerWidget {
   final String title;
   final String subtitle;

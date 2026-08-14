@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/core/error/failures.dart';
-import 'package:product_searcher/core/usecases/usecase.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:clean_auth_kit/core/error/failures.dart';
+import 'package:clean_auth_kit/core/usecases/usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
 
 import '../auth_domain_mocks.dart';
 

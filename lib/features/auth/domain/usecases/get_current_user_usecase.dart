@@ -1,5 +1,5 @@
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/repositories/auth_repository.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/repositories/auth_repository.dart';
 
 /// Use case for retrieving the currently authenticated user.
 ///

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/get_current_user_usecase.dart';
 
 import '../auth_domain_mocks.dart';
 

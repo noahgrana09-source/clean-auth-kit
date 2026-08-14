@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show AutofillHints, TextInput;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
@@ -14,14 +15,13 @@ import '../widgets/auth_header.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/loading_overlay.dart';
 
-/// Pantalla de registro adaptativa y responsiva.
+/// Adaptive, responsive registration screen.
 ///
-/// Usa [ConsumerStatefulWidget] de Riverpod para manejar el estado
-/// de autenticación. Renderiza widgets nativos de Cupertino en iOS
-/// y Material en Android. El formulario se limita a 400px de ancho
-/// en tablets/landscape.
+/// Uses Riverpod's [ConsumerStatefulWidget] to manage authentication
+/// state. Renders native Cupertino widgets on iOS and Material on
+/// Android. The form is capped at 400px wide on tablets/landscape.
 class RegisterScreen extends ConsumerStatefulWidget {
-  /// Crea un [RegisterScreen].
+  /// Creates a [RegisterScreen].
   const RegisterScreen({super.key});
 
   @override
@@ -29,9 +29,9 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  /// Tiempo que se mantiene la pantalla visible tras un registro/login
-  /// exitoso, para que la animación de éxito del [AuthHeader] alcance
-  /// a reproducirse antes de navegar.
+  /// How long the screen stays visible after a successful
+  /// registration/login, so the [AuthHeader] success animation has
+  /// time to finish playing before navigating away.
   static const _successCelebrationDelay = Duration(milliseconds: 2000);
 
   final _formKey = GlobalKey<FormState>();
@@ -63,59 +63,64 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
-  /// Valida que el nombre no esté vacío.
+  /// Validates that the name is not empty.
   String? _validateName(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'El nombre es obligatorio';
+      return l10n.nameRequired;
     }
     return null;
   }
 
-  /// Valida un email con una expresión regular básica.
+  /// Validates an email against a basic regular expression.
   String? _validateEmail(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'El correo electrónico es obligatorio';
+      return l10n.emailRequired;
     }
     final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Ingresa un correo electrónico válido';
+      return l10n.invalidEmail;
     }
     return null;
   }
 
-  /// Valida que la contraseña cumpla los requisitos de seguridad:
-  /// mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
+  /// Validates that the password meets the security requirements:
+  /// minimum 8 characters, one uppercase letter, one digit, and one
+  /// special character.
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'La contraseña es obligatoria';
+      return l10n.passwordRequired;
     }
     if (value.length < 8) {
-      return 'Mínimo 8 caracteres';
+      return l10n.passwordTooShort;
     }
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Debe contener al menos una mayúscula';
+      return l10n.passwordNeedsUppercase;
     }
     if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Debe contener al menos un número';
+      return l10n.passwordNeedsNumber;
     }
     if (!RegExp(r"[!@#$%^&*()\-_=+\[\]{};:,.<>?/\\|~]").hasMatch(value)) {
-      return 'Debe contener al menos un carácter especial';
+      return l10n.passwordNeedsSpecialChar;
     }
     return null;
   }
 
-  /// Valida que la confirmación de contraseña coincida.
+  /// Validates that the password confirmation matches.
   String? _validateConfirmPassword(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Confirma tu contraseña';
+      return l10n.confirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Las contraseñas no coinciden';
+      return l10n.passwordsDoNotMatch;
     }
     return null;
   }
 
-  /// Ejecuta el registro con email y contraseña.
+  /// Runs registration with email and password.
   Future<void> _signUpWithEmail() async {
     setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
@@ -128,12 +133,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         );
   }
 
-  /// Ejecuta el registro/inicio de sesión con Google.
+  /// Runs registration/sign-in with Google.
   Future<void> _signInWithGoogle() async {
     await ref.read(authProvider.notifier).signInWithGoogle();
   }
 
-  /// Regresa a la pantalla de inicio de sesión.
+  /// Returns to the login screen.
   void _navigateToLogin() {
     ref.read(authProvider.notifier).clearError();
     Navigator.of(context).pop();
@@ -143,6 +148,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (_, next) {
       if (next is AuthAuthenticated) {
+        // Tell the platform the submission succeeded so it can offer to
+        // save the credentials just entered (Google Password Manager on
+        // Android, Keychain on iOS).
+        TextInput.finishAutofillContext();
         final navigator = Navigator.of(context);
         Future.delayed(_successCelebrationDelay, () {
           if (mounted) navigator.popUntil((route) => route.isFirst);
@@ -157,7 +166,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          middle: const Text('Crear cuenta'),
           leading: CupertinoNavigationBarBackButton(
             onPressed: _navigateToLogin,
           ),
@@ -172,7 +180,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear cuenta')),
+      appBar: AppBar(leading: BackButton(onPressed: _navigateToLogin)),
       body: SafeArea(
         child: LoadingOverlay(
           isLoading: isLoading,
@@ -182,7 +190,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  /// Construye el cuerpo de la pantalla con layout responsivo.
+  /// Builds the screen body with a responsive layout.
   Widget _buildBody(bool isLoading, String? errorMessage) {
     return Center(
       child: SingleChildScrollView(
@@ -199,140 +207,142 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  /// Construye el formulario de registro.
+  /// Builds the registration form.
   Widget _buildForm(bool isLoading, String? errorMessage) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _formKey,
       autovalidateMode: _submitted
           ? AutovalidateMode.onUserInteraction
           : AutovalidateMode.disabled,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header
-          AuthHeader(
-            title: 'Crear cuenta',
-            subtitle: 'Regístrate para comenzar',
-            isPasswordActive: _isPasswordFocused,
-          ),
-          const SizedBox(height: 32),
-
-          // Error
-          AuthErrorWidget(message: errorMessage),
-          if (errorMessage != null) const SizedBox(height: 16),
-
-          // Campo nombre
-          AdaptiveTextField(
-            controller: _nameController,
-            hint: 'Nombre completo',
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.person
-                : Icons.person_outlined,
-            validator: _validateName,
-          ),
-          const SizedBox(height: 16),
-
-          // Campo email
-          AdaptiveTextField(
-            controller: _emailController,
-            hint: 'Correo electrónico',
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.mail
-                : Icons.email_outlined,
-            validator: _validateEmail,
-          ),
-          const SizedBox(height: 16),
-
-          // Campo contraseña
-          AdaptiveTextField(
-            controller: _passwordController,
-            focusNode: _passwordFocusNode,
-            hint: 'Contraseña',
-            obscureText: _obscurePassword,
-            textInputAction: TextInputAction.next,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.lock
-                : Icons.lock_outlined,
-            suffixIcon: GestureDetector(
-              onTap: () => setState(() => _obscurePassword = !_obscurePassword),
-              child: Icon(
-                _obscurePassword
-                    ? (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye_slash
-                          : Icons.visibility_off_outlined)
-                    : (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye
-                          : Icons.visibility_outlined),
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
+      child: AutofillGroup(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AuthHeader(
+              title: l10n.createAccountTitle,
+              subtitle: l10n.registerSubtitle,
+              isPasswordActive: _isPasswordFocused,
             ),
-            validator: _validatePassword,
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 32),
 
-          // Campo confirmar contraseña
-          AdaptiveTextField(
-            controller: _confirmPasswordController,
-            hint: 'Confirmar contraseña',
-            obscureText: _obscureConfirmPassword,
-            textInputAction: TextInputAction.done,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.lock_shield
-                : Icons.lock_outline,
-            suffixIcon: GestureDetector(
-              onTap: () => setState(
-                () => _obscureConfirmPassword = !_obscureConfirmPassword,
-              ),
-              child: Icon(
-                _obscureConfirmPassword
-                    ? (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye_slash
-                          : Icons.visibility_off_outlined)
-                    : (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye
-                          : Icons.visibility_outlined),
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
+            AuthErrorWidget(message: errorMessage),
+            if (errorMessage != null) const SizedBox(height: 16),
+
+            AdaptiveTextField(
+              controller: _nameController,
+              hint: l10n.nameHint,
+              keyboardType: TextInputType.name,
+              textInputAction: TextInputAction.next,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.person
+                  : Icons.person_outlined,
+              validator: _validateName,
+              autofillHints: const [AutofillHints.name],
             ),
-            validator: _validateConfirmPassword,
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-          // Botón crear cuenta
-          AdaptiveButton(
-            text: 'Crear cuenta',
-            isLoading: isLoading,
-            onPressed: isLoading ? null : _signUpWithEmail,
-          ),
-          const SizedBox(height: 16),
+            AdaptiveTextField(
+              controller: _emailController,
+              hint: l10n.emailHint,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.mail
+                  : Icons.email_outlined,
+              validator: _validateEmail,
+              autofillHints: const [
+                AutofillHints.newUsername,
+                AutofillHints.email,
+              ],
+            ),
+            const SizedBox(height: 16),
 
-          // Separador
-          _buildDivider(),
-          const SizedBox(height: 16),
+            AdaptiveTextField(
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              hint: l10n.passwordHint,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.next,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.lock
+                  : Icons.lock_outlined,
+              suffixIcon: GestureDetector(
+                onTap: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
+                child: Icon(
+                  _obscurePassword
+                      ? (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye_slash
+                            : Icons.visibility_off_outlined)
+                      : (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye
+                            : Icons.visibility_outlined),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ),
+              validator: _validatePassword,
+              autofillHints: const [AutofillHints.newPassword],
+            ),
+            const SizedBox(height: 16),
 
-          // Botón Google
-          GoogleSignInButton(
-            isLoading: isLoading,
-            onPressed: isLoading ? null : _signInWithGoogle,
-            text: "Registrarse con Google",
-          ),
-          const SizedBox(height: 24),
+            AdaptiveTextField(
+              controller: _confirmPasswordController,
+              hint: l10n.confirmPasswordHint,
+              obscureText: _obscureConfirmPassword,
+              textInputAction: TextInputAction.done,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.lock_shield
+                  : Icons.lock_outline,
+              suffixIcon: GestureDetector(
+                onTap: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                ),
+                child: Icon(
+                  _obscureConfirmPassword
+                      ? (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye_slash
+                            : Icons.visibility_off_outlined)
+                      : (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye
+                            : Icons.visibility_outlined),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ),
+              validator: _validateConfirmPassword,
+              autofillHints: const [AutofillHints.newPassword],
+            ),
+            const SizedBox(height: 24),
 
-          // Link a login
-          _buildLoginLink(),
-        ],
+            AdaptiveButton(
+              text: l10n.createAccountTitle,
+              isLoading: isLoading,
+              onPressed: isLoading ? null : _signUpWithEmail,
+            ),
+            const SizedBox(height: 16),
+
+            _buildDivider(),
+            const SizedBox(height: 16),
+
+            GoogleSignInButton(
+              isLoading: isLoading,
+              onPressed: isLoading ? null : _signInWithGoogle,
+              text: l10n.signUpWithGoogle,
+            ),
+            const SizedBox(height: 24),
+
+            _buildLoginLink(),
+          ],
+        ),
       ),
     );
   }
 
-  /// Separador con texto "o".
+  /// Divider with an "or" label.
   Widget _buildDivider() {
     final color = Theme.of(context).colorScheme.onSurfaceVariant;
     return Row(
@@ -341,7 +351,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'o',
+            AppLocalizations.of(context)!.orDivider,
             style: AppTextStyles.bodySmall.copyWith(color: color),
           ),
         ),
@@ -350,13 +360,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  /// Link de navegación a la pantalla de inicio de sesión.
+  /// Navigation link to the login screen.
   Widget _buildLoginLink() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '¿Ya tienes cuenta? ',
+          l10n.haveAccountPrompt,
           style: AppTextStyles.bodyMedium.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -364,7 +375,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         GestureDetector(
           onTap: _navigateToLogin,
           child: Text(
-            'Iniciar sesión',
+            l10n.signIn,
             style: AppTextStyles.labelLarge.copyWith(color: AppColors.brand),
           ),
         ),

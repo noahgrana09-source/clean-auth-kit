@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/utils/platform_utils.dart';
 
-/// Superpone un indicador de carga sobre [child] sin desmontarlo.
+/// Overlays a loading indicator on top of [child] without unmounting it.
 ///
-/// A diferencia de reemplazar [child] por otra pantalla, esto preserva
-/// el [State] del árbol debajo (controllers de texto, flags locales,
-/// listeners de Riverpod ya conectados) mientras dura una operación
-/// asíncrona como iniciar sesión o registrarse.
+/// Unlike replacing [child] with a different screen, this preserves
+/// the [State] of the tree below (text controllers, local flags,
+/// already-connected Riverpod listeners) for as long as an async
+/// operation like signing in or registering is running.
 class LoadingOverlay extends StatelessWidget {
   /// Si `true`, muestra el velo y el indicador de carga sobre [child].
   final bool isLoading;

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show AutofillHints, TextInput;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
@@ -61,13 +63,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signInWithEmail() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    final emailErr = email.isEmpty
-        ? 'El correo electrónico es obligatorio'
-        : null;
-    final passErr = password.isEmpty ? 'La contraseña es obligatoria' : null;
+    final emailErr = email.isEmpty ? l10n.emailRequired : null;
+    final passErr = password.isEmpty ? l10n.passwordRequired : null;
 
     setState(() {
       _emailError = emailErr;
@@ -106,7 +107,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     ref.listen<AuthState>(authProvider, (_, next) {
+      if (next is AuthAuthenticated) {
+        // Tell the platform the submission succeeded so it can offer to
+        // save the credentials just entered (Google Password Manager on
+        // Android, Keychain on iOS).
+        TextInput.finishAutofillContext();
+      }
       if (_attemptedEmailSignIn && next is AuthError) {
         _attemptedEmailSignIn = false;
         // Only relabel recognized "wrong credentials" codes. Anything
@@ -115,8 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         // masked as an incorrect user/password.
         if (_invalidCredentialCodes.contains(next.code)) {
           setState(() {
-            _emailError = 'Usuario o contraseña incorrectos';
-            _passwordError = 'Usuario o contraseña incorrectos';
+            _emailError = l10n.invalidCredentials;
+            _passwordError = l10n.invalidCredentials;
           });
           _formKey.currentState?.validate();
         }
@@ -168,81 +177,91 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Widget _buildForm(bool isLoading, String? errorMessage) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.disabled,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AuthHeader(
-            title: 'Bienvenido',
-            subtitle: 'Inicia sesión para continuar',
-            isPasswordActive: _isPasswordFocused,
-          ),
-          const SizedBox(height: 32),
-
-          AuthErrorWidget(message: errorMessage),
-          if (errorMessage != null) const SizedBox(height: 16),
-
-          AdaptiveTextField(
-            controller: _emailController,
-            hint: 'Correo electrónico',
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.mail
-                : Icons.email_outlined,
-            validator: (_) => _emailError,
-          ),
-          const SizedBox(height: 16),
-
-          AdaptiveTextField(
-            controller: _passwordController,
-            focusNode: _passwordFocusNode,
-            hint: 'Contraseña',
-            obscureText: _obscurePassword,
-            textInputAction: TextInputAction.done,
-            prefixIcon: PlatformUtils.isCupertino
-                ? CupertinoIcons.lock
-                : Icons.lock_outlined,
-            suffixIcon: GestureDetector(
-              onTap: () => setState(() => _obscurePassword = !_obscurePassword),
-              child: Icon(
-                _obscurePassword
-                    ? (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye_slash
-                          : Icons.visibility_off_outlined)
-                    : (PlatformUtils.isCupertino
-                          ? CupertinoIcons.eye
-                          : Icons.visibility_outlined),
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
+      child: AutofillGroup(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AuthHeader(
+              title: l10n.loginWelcomeTitle,
+              subtitle: l10n.loginWelcomeSubtitle,
+              isPasswordActive: _isPasswordFocused,
             ),
-            validator: (_) => _passwordError,
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-          AdaptiveButton(
-            text: 'Iniciar sesión',
-            isLoading: isLoading,
-            onPressed: isLoading ? null : _signInWithEmail,
-          ),
-          const SizedBox(height: 16),
+            AuthErrorWidget(message: errorMessage),
+            if (errorMessage != null) const SizedBox(height: 16),
 
-          _buildDivider(),
-          const SizedBox(height: 16),
+            AdaptiveTextField(
+              controller: _emailController,
+              hint: l10n.emailHint,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.mail
+                  : Icons.email_outlined,
+              validator: (_) => _emailError,
+              autofillHints: const [
+                AutofillHints.username,
+                AutofillHints.email,
+              ],
+            ),
+            const SizedBox(height: 16),
 
-          GoogleSignInButton(
-            isLoading: isLoading,
-            onPressed: isLoading ? null : _signInWithGoogle,
-            text: 'Iniciar sesión con Google',
-          ),
-          const SizedBox(height: 24),
+            AdaptiveTextField(
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              hint: l10n.passwordHint,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.done,
+              prefixIcon: PlatformUtils.isCupertino
+                  ? CupertinoIcons.lock
+                  : Icons.lock_outlined,
+              suffixIcon: GestureDetector(
+                onTap: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
+                child: Icon(
+                  _obscurePassword
+                      ? (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye_slash
+                            : Icons.visibility_off_outlined)
+                      : (PlatformUtils.isCupertino
+                            ? CupertinoIcons.eye
+                            : Icons.visibility_outlined),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ),
+              validator: (_) => _passwordError,
+              autofillHints: const [AutofillHints.password],
+            ),
+            const SizedBox(height: 24),
 
-          _buildRegisterLink(),
-        ],
+            AdaptiveButton(
+              text: l10n.signIn,
+              isLoading: isLoading,
+              onPressed: isLoading ? null : _signInWithEmail,
+            ),
+            const SizedBox(height: 16),
+
+            _buildDivider(),
+            const SizedBox(height: 16),
+
+            GoogleSignInButton(
+              isLoading: isLoading,
+              onPressed: isLoading ? null : _signInWithGoogle,
+              text: l10n.signInWithGoogle,
+            ),
+            const SizedBox(height: 24),
+
+            _buildRegisterLink(),
+          ],
+        ),
       ),
     );
   }
@@ -255,7 +274,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'o',
+            AppLocalizations.of(context)!.orDivider,
             style: AppTextStyles.bodySmall.copyWith(color: color),
           ),
         ),
@@ -265,11 +284,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Widget _buildRegisterLink() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '¿No tienes cuenta? ',
+          l10n.noAccountPrompt,
           style: AppTextStyles.bodyMedium.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -277,7 +297,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         GestureDetector(
           onTap: _navigateToRegister,
           child: Text(
-            'Regístrate',
+            l10n.registerLink,
             style: AppTextStyles.labelLarge.copyWith(color: AppColors.brand),
           ),
         ),

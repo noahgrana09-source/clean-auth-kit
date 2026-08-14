@@ -5,47 +5,51 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/platform_utils.dart';
 import 'app_cupertino_text_field.dart';
 
-/// Campo de texto adaptativo que renderiza [CupertinoTextField] en iOS
-/// y [TextField] (Material) en Android/Web.
+/// Adaptive text field that renders [CupertinoTextField] on iOS
+/// and [TextField] (Material) on Android/Web.
 ///
-/// Acepta los parámetros más comunes de entrada de texto y los traduce
-/// al componente nativo de cada plataforma, manteniendo una apariencia
-/// coherente con la paleta de [AppColors].
+/// Accepts the most common text input parameters and translates
+/// them to each platform's native component, keeping a look
+/// consistent with the [AppColors] palette.
 class AdaptiveTextField extends StatelessWidget {
-  /// Texto de sugerencia cuando el campo está vacío.
+  /// Hint text shown when the field is empty.
   final String? hint;
 
-  /// Controlador del campo de texto.
+  /// Text field controller.
   final TextEditingController? controller;
 
-  /// Si `true`, oculta el texto (para contraseñas).
+  /// If `true`, obscures the text (for passwords).
   final bool obscureText;
 
-  /// Tipo de teclado a mostrar.
+  /// Keyboard type to show.
   final TextInputType? keyboardType;
 
-  /// Función de validación del campo.
+  /// Field validation function.
   final String? Function(String?)? validator;
 
-  /// Ícono mostrado al inicio del campo.
+  /// Icon shown at the start of the field.
   final IconData? prefixIcon;
 
-  /// Widget mostrado al final del campo.
+  /// Widget shown at the end of the field.
   final Widget? suffixIcon;
 
-  /// Acción del teclado (done, next, etc.).
+  /// Keyboard action (done, next, etc.).
   final TextInputAction? textInputAction;
 
-  /// Callback cuando el texto cambia.
+  /// Callback when the text changes.
   final ValueChanged<String>? onChanged;
 
-  /// Indica si el campo debe solicitar foco automáticamente.
+  /// Whether the field should request focus automatically.
   final bool autofocus;
 
-  /// Nodo de foco opcional, para observar cuándo el campo está activo.
+  /// Optional focus node, to observe when the field is active.
   final FocusNode? focusNode;
 
-  /// Crea un [AdaptiveTextField] adaptativo.
+  /// Autofill hints (e.g. [AutofillHints.email]), so the operating
+  /// system can offer to save and autofill the field's value.
+  final Iterable<String>? autofillHints;
+
+  /// Creates an adaptive [AdaptiveTextField].
   const AdaptiveTextField({
     super.key,
     this.hint,
@@ -59,6 +63,7 @@ class AdaptiveTextField extends StatelessWidget {
     this.onChanged,
     this.autofocus = false,
     this.focusNode,
+    this.autofillHints,
   });
 
   @override
@@ -69,7 +74,7 @@ class AdaptiveTextField extends StatelessWidget {
     return _buildMaterialField(context);
   }
 
-  /// Construye el campo de texto estilo Cupertino (iOS/macOS).
+  /// Builds the Cupertino-style text field (iOS/macOS).
   Widget _buildCupertinoField(BuildContext context) {
     return AppCupertinoTextField(
       controller: controller,
@@ -83,10 +88,11 @@ class AdaptiveTextField extends StatelessWidget {
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       focusNode: focusNode,
+      autofillHints: autofillHints,
     );
   }
 
-  /// Construye el campo de texto estilo Material (Android/Web).
+  /// Builds the Material-style text field (Android/Web).
   Widget _buildMaterialField(BuildContext context) {
     return TextFormField(
       controller: controller,
@@ -97,6 +103,7 @@ class AdaptiveTextField extends StatelessWidget {
       autofocus: autofocus,
       validator: validator,
       focusNode: focusNode,
+      autofillHints: autofillHints,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,

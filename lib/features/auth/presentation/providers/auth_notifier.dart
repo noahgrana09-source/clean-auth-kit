@@ -1,12 +1,12 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/usecases/get_current_user_usecase.dart';
-import 'package:product_searcher/features/auth/domain/usecases/sign_in_with_email_usecase.dart';
-import 'package:product_searcher/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
-import 'package:product_searcher/features/auth/domain/usecases/sign_out_usecase.dart';
-import 'package:product_searcher/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
-import 'package:product_searcher/features/auth/presentation/providers/auth_providers.dart';
-import 'package:product_searcher/features/auth/presentation/providers/auth_state.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_email_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
+import 'package:clean_auth_kit/features/auth/presentation/providers/auth_providers.dart';
+import 'package:clean_auth_kit/features/auth/presentation/providers/auth_state.dart';
 import '../../../../core/usecases/usecase.dart';
 
 part 'auth_notifier.g.dart';
@@ -32,7 +32,6 @@ class AuthNotifier extends _$AuthNotifier {
     _signOut = ref.watch(signOutUseCaseProvider);
     _getCurrentUser = ref.watch(getCurrentUserUseCaseProvider);
 
-    // Check for existing authenticated user on initialization
     final UserEntity? user = _getCurrentUser();
     if (user != null) {
       return AuthState.authenticated(user);
@@ -47,6 +46,7 @@ class AuthNotifier extends _$AuthNotifier {
     result.fold((failure) {
       if (failure.code == 'canceled') {
         state = const AuthState.unauthenticated();
+        return;
       }
       state = AuthState.error(failure.message, code: failure.code);
     }, (user) => state = AuthState.authenticated(user));

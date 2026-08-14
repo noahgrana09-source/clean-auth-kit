@@ -1,6 +1,6 @@
 {
-    "name": "product_searcher",
-    "short_name": "product_searcher",
+    "name": "Clean Auth Kit",
+    "short_name": "Auth Kit",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

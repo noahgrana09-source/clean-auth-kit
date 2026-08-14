@@ -2,15 +2,15 @@ import 'package:dartz/dartz.dart';
 
 import '../error/failures.dart';
 
-/// Contrato base para todos los casos de uso de la aplicación.
+/// Base contract for all use cases in the application.
 ///
-/// Sigue el patrón Command: cada caso de uso encapsula
-/// una única operación de negocio bien definida.
+/// Follows the Command pattern: each use case encapsulates
+/// a single, well-defined business operation.
 ///
-/// [Type] es el tipo del resultado exitoso.
-/// [Params] son los parámetros de entrada.
+/// [Type] is the type of the successful result.
+/// [Params] are the input parameters.
 ///
-/// Ejemplo de implementación:
+/// Implementation example:
 /// ```dart
 /// class SignInWithEmailUseCase implements UseCase<UserEntity, SignInParams> {
 ///   @override
@@ -23,27 +23,27 @@ import '../error/failures.dart';
 /// }
 /// ```
 abstract class UseCase<T, Params> {
-  /// Ejecuta el caso de uso con los [params] dados.
+  /// Executes the use case with the given [params].
   ///
-  /// Retorna [Right] con el resultado si la operación fue exitosa,
-  /// o [Left] con un [Failure] descriptivo si falló.
+  /// Returns [Right] with the result if the operation succeeded,
+  /// or [Left] with a descriptive [Failure] if it failed.
   Future<Either<Failure, T>> call(Params params);
 }
 
-/// Contrato base para casos de uso que retornan un [Stream].
+/// Base contract for use cases that return a [Stream].
 abstract class StreamUseCase<T, Params> {
-  /// Retorna un [Stream] del tipo [T] en función de [params].
+  /// Returns a [Stream] of type [T] based on [params].
   Stream<T> call(Params params);
 }
 
-/// Parámetros vacíos para casos de uso que no requieren entrada.
+/// Empty parameters for use cases that require no input.
 ///
-/// Uso:
+/// Usage:
 /// ```dart
 /// final result = await signOutUseCase(NoParams());
 /// ```
 class NoParams {
-  /// Instancia reutilizable para evitar allocations innecesarios.
+  /// Reusable instance to avoid unnecessary allocations.
   const NoParams();
 
   @override

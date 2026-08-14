@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
-/// Configuración de temas de la aplicación.
+/// Application theme configuration.
 ///
-/// Provee [ThemeData] para Material (Android) y
-/// [CupertinoThemeData] para iOS, ambos alineados con la misma
-/// paleta de [AppColors].
+/// Provides [ThemeData] for Material (Android) and
+/// [CupertinoThemeData] for iOS, both aligned with the same
+/// [AppColors] palette.
 ///
-/// Uso en [MaterialApp]:
+/// Usage in [MaterialApp]:
 /// ```dart
 /// MaterialApp(
 ///   theme: AppTheme.light,
@@ -21,7 +21,7 @@ import 'app_text_styles.dart';
 abstract final class AppTheme {
   // ── Material ─────────────────────────────────────────────────────────────
 
-  /// Tema claro de Material (Android).
+  /// Light Material theme (Android).
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
@@ -38,7 +38,7 @@ abstract final class AppTheme {
     outlinedButtonTheme: _outlinedButtonTheme,
     textButtonTheme: _textButtonTheme,
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColorsLight.surface,
+      backgroundColor: AppColorsLight.background,
       foregroundColor: AppColorsLight.textPrimary,
       elevation: 0,
       centerTitle: true,
@@ -52,7 +52,7 @@ abstract final class AppTheme {
     ),
   );
 
-  /// Tema oscuro de Material (Android).
+  /// Dark Material theme (Android).
   static ThemeData get dark => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -69,7 +69,7 @@ abstract final class AppTheme {
     outlinedButtonTheme: _outlinedButtonTheme,
     textButtonTheme: _textButtonTheme,
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColorsDark.surface,
+      backgroundColor: AppColorsDark.background,
       foregroundColor: AppColorsDark.textPrimary,
       elevation: 0,
       centerTitle: true,
@@ -85,22 +85,22 @@ abstract final class AppTheme {
 
   // ── Cupertino ────────────────────────────────────────────────────────────
 
-  /// Tema claro de Cupertino (iOS).
+  /// Light Cupertino theme (iOS).
   static CupertinoThemeData get cupertinoLight => CupertinoThemeData(
     brightness: Brightness.light,
     primaryColor: AppColors.brand,
     primaryContrastingColor: Colors.white,
-    barBackgroundColor: AppColorsLight.surface,
+    barBackgroundColor: AppColorsLight.background,
     scaffoldBackgroundColor: AppColorsLight.background,
     textTheme: AppTextStyles.lightCupertinoTextTheme,
   );
 
-  /// Tema oscuro de Cupertino (iOS).
+  /// Dark Cupertino theme (iOS).
   static CupertinoThemeData get cupertinoDark => CupertinoThemeData(
     brightness: Brightness.dark,
     primaryColor: AppColors.brand,
     primaryContrastingColor: Colors.white,
-    barBackgroundColor: AppColorsDark.surface,
+    barBackgroundColor: AppColorsDark.background,
     scaffoldBackgroundColor: AppColorsDark.background,
     textTheme: AppTextStyles.darkCupertinoTextTheme,
   );

@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:product_searcher/core/error/failures.dart';
-import 'package:product_searcher/core/usecases/usecase.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/repositories/auth_repository.dart';
+import 'package:clean_auth_kit/core/error/failures.dart';
+import 'package:clean_auth_kit/core/usecases/usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/repositories/auth_repository.dart';
 
 /// Use case for signing in with Google authentication.
 ///

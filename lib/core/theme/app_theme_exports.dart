@@ -1,9 +1,9 @@
-/// Barrel export para el módulo de tema de la aplicación.
+/// Barrel export for the application's theme module.
 ///
-/// Importa este archivo para acceder a toda la configuración
-/// de colores, tipografía y temas:
+/// Import this file to access all color, typography, and
+/// theme configuration:
 /// ```dart
-/// import 'package:product_searcher/core/theme/app_theme_exports.dart';
+/// import 'package:clean_auth_kit/core/theme/app_theme_exports.dart';
 /// ```
 library;
 

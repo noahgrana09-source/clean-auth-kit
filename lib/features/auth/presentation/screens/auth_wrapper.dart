@@ -2,19 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/platform_utils.dart';
 import '../providers/auth_notifier.dart';
 import '../providers/auth_state.dart';
 import 'login_screen.dart';
 
-/// Widget raíz de autenticación que observa el estado de auth.
+/// Root authentication widget that observes the auth state.
 ///
-/// Observa [authProvider] y redirige según el estado:
-/// - [AuthAuthenticated] → pantalla principal (placeholder).
+/// Watches [authProvider] and redirects based on its state:
+/// - [AuthAuthenticated] → main screen (placeholder).
 /// - [AuthUnauthenticated] / [AuthError] / [AuthLoading] → [LoginScreen]
-///   (que muestra su propio indicador de carga superpuesto).
-/// - [AuthInitial] → indicador de carga nativo, antes de saber si hay
-///   una sesión activa.
+///   (which shows its own overlaid loading indicator).
+/// - [AuthInitial] → native loading indicator, before knowing whether
+///   there is an active session.
 class AuthWrapper extends ConsumerStatefulWidget {
   const AuthWrapper({super.key});
 
@@ -23,9 +24,9 @@ class AuthWrapper extends ConsumerStatefulWidget {
 }
 
 class _AuthWrapperState extends ConsumerState<AuthWrapper> {
-  /// Tiempo que se sigue mostrando [LoginScreen] tras un login/registro
-  /// exitoso, para que la animación de éxito del [AuthHeader] alcance a
-  /// reproducirse antes de mostrar la pantalla principal.
+  /// How long [LoginScreen] stays visible after a successful
+  /// login/registration, so the [AuthHeader] success animation has
+  /// time to finish playing before the main screen is shown.
   static const _successCelebrationDelay = Duration(milliseconds: 2000);
 
   bool _showAuthenticatedScreen = false;
@@ -73,7 +74,7 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
     );
   }
 
-  /// Pantalla de carga mientras se determina el estado de auth.
+  /// Loading screen shown while the auth state is being determined.
   Widget _buildLoadingScreen() {
     if (PlatformUtils.isCupertino) {
       return const CupertinoPageScaffold(
@@ -83,33 +84,31 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
     return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 
-  /// Placeholder de pantalla autenticada.
+  /// Placeholder for the authenticated screen.
   ///
-  /// Será reemplazado por la pantalla principal real de la app.
+  /// Will be replaced by the app's real main screen.
   Widget _buildAuthenticatedScreen(
     BuildContext context,
     WidgetRef ref,
     String? displayName,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     void signOut() => ref.read(authProvider.notifier).signOut();
 
     if (PlatformUtils.isCupertino) {
       return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(middle: Text('Inicio')),
+        navigationBar: CupertinoNavigationBar(middle: Text(l10n.homeTitle)),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Bienvenido, ${displayName ?? 'usuario'}',
+                l10n.welcomeUser(displayName ?? l10n.defaultUserName),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
               const SizedBox(height: 24),
-              CupertinoButton(
-                onPressed: signOut,
-                child: const Text('Cerrar sesión'),
-              ),
+              CupertinoButton(onPressed: signOut, child: Text(l10n.signOut)),
             ],
           ),
         ),
@@ -117,20 +116,20 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inicio')),
+      appBar: AppBar(title: Text(l10n.homeTitle)),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Bienvenido, ${displayName ?? 'usuario'}',
+              l10n.welcomeUser(displayName ?? l10n.defaultUserName),
               style: TextStyle(color: colorScheme.onSurface),
             ),
             const SizedBox(height: 24),
             TextButton.icon(
               onPressed: signOut,
               icon: const Icon(Icons.logout),
-              label: const Text('Cerrar sesión'),
+              label: Text(l10n.signOut),
             ),
           ],
         ),

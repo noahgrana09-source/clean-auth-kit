@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:product_searcher/core/error/failures.dart';
-import 'package:product_searcher/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
-import 'package:product_searcher/features/auth/domain/repositories/auth_repository.dart';
+import 'package:clean_auth_kit/core/error/failures.dart';
+import 'package:clean_auth_kit/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/repositories/auth_repository.dart';
 
 /// Concrete implementation of [AuthRepository].
 ///

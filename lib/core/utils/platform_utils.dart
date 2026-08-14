@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-/// Utilidades para detección de plataforma y selección de widgets adaptativos.
+/// Platform detection and adaptive widget selection utilities.
 ///
-/// Permite decidir entre widgets de Cupertino (iOS) y Material (Android)
-/// en función de la plataforma actual, respetando el look & feel nativo
-/// de cada sistema operativo.
+/// Decides between Cupertino (iOS) and Material (Android) widgets
+/// based on the current platform, respecting each operating
+/// system's native look & feel.
 ///
-/// Ejemplo de uso:
+/// Usage example:
 /// ```dart
 /// if (PlatformUtils.isIOS) {
 ///   return CupertinoButton(...);
@@ -17,25 +17,25 @@ import 'package:flutter/foundation.dart';
 /// }
 /// ```
 abstract final class PlatformUtils {
-  /// `true` si la app se ejecuta en iOS o macOS.
+  /// `true` if the app is running on iOS or macOS.
   static bool get isIOS => !kIsWeb && Platform.isIOS;
 
-  /// `true` si la app se ejecuta en Android.
+  /// `true` if the app is running on Android.
   static bool get isAndroid => !kIsWeb && Platform.isAndroid;
 
-  /// `true` si la app se ejecuta en la web.
+  /// `true` if the app is running on the web.
   static bool get isWeb => kIsWeb;
 
-  /// `true` si la app se ejecuta en macOS.
+  /// `true` if the app is running on macOS.
   static bool get isMacOS => !kIsWeb && Platform.isMacOS;
 
-  /// `true` si la app usa convenciones de UI de Cupertino (Apple).
+  /// `true` if the app should use Cupertino (Apple) UI conventions.
   ///
-  /// Retorna `true` en iOS y macOS.
+  /// Returns `true` on iOS and macOS.
   static bool get isCupertino => isIOS || isMacOS;
 
-  /// `true` si la app usa convenciones de UI de Material (Google).
+  /// `true` if the app should use Material (Google) UI conventions.
   ///
-  /// Retorna `true` en Android y Web.
+  /// Returns `true` on Android and Web.
   static bool get isMaterial => isAndroid || isWeb;
 }

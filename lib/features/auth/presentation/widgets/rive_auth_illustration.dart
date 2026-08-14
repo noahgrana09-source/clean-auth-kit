@@ -9,25 +9,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rive/rive.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
 import '../providers/auth_notifier.dart';
 import '../providers/auth_state.dart';
 
-/// Ilustración animada de Rive para las pantallas de autenticación
-/// (login y registro).
+/// Animated Rive illustration for the authentication screens
+/// (login and registration).
 ///
-/// Carga el state machine `robot_login_machine` del artboard
-/// `robot_artboard` (`assets/rive/robot_sign_in.riv`) y lo conecta con
-/// la app real:
-/// - `is_hands_up` (Boolean): se tapa los ojos mientras [isPasswordActive]
-///   es `true` (el campo de contraseña tiene el foco).
-/// - `success` (Trigger): se dispara cuando [authProvider] pasa a
+/// Loads the `robot_login_machine` state machine from the
+/// `robot_artboard` artboard (`assets/rive/robot_sign_in.riv`) and
+/// wires it to the real app state:
+/// - `is_hands_up` (Boolean): covers its eyes while [isPasswordActive]
+///   is `true` (the password field has focus).
+/// - `success` (Trigger): fires when [authProvider] becomes
 ///   [AuthAuthenticated].
-/// - `fail` (Trigger): se dispara cuando [authProvider] pasa a [AuthError].
+/// - `fail` (Trigger): fires when [authProvider] becomes [AuthError].
 class RiveAuthIllustration extends ConsumerStatefulWidget {
-  /// Si `true`, el robot se tapa los ojos (pensado para cuando el campo
-  /// de contraseña tiene el foco).
+  /// If `true`, the robot covers its eyes (meant for when the
+  /// password field has focus).
   final bool isPasswordActive;
 
   const RiveAuthIllustration({super.key, this.isPasswordActive = false});
@@ -66,8 +67,8 @@ class _RiveAuthIllustrationState extends ConsumerState<RiveAuthIllustration> {
 
   @override
   Widget build(BuildContext context) {
-    // Escucha los cambios de AuthState para disparar los triggers del
-    // state machine en el momento exacto en que ocurren.
+    // Listens for AuthState changes to fire the state machine's
+    // triggers at the exact moment they happen.
     ref.listen<AuthState>(authProvider, (_, next) {
       if (next is AuthAuthenticated) {
         _success?.fire();
@@ -106,8 +107,8 @@ class _RiveAuthIllustrationState extends ConsumerState<RiveAuthIllustration> {
     );
   }
 
-  /// Se muestra cuando el `.riv` no pudo cargarse, en vez de dejar el
-  /// espacio en blanco sin avisar nada al usuario.
+  /// Shown when the `.riv` file fails to load, instead of leaving a
+  /// blank space with no feedback for the user.
   Widget _buildFailedPlaceholder(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Center(
@@ -123,7 +124,7 @@ class _RiveAuthIllustrationState extends ConsumerState<RiveAuthIllustration> {
           ),
           const SizedBox(height: 8),
           Text(
-            'No se pudo cargar la animación',
+            AppLocalizations.of(context)!.animationLoadError,
             style: AppTextStyles.bodySmall.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),

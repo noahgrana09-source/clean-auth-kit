@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
-/// Ilustración animada para las pantallas de autenticación.
+/// Animated illustration for the authentication screens.
 ///
-/// Muestra un candado sobre un gradiente circular con efecto de flotación
-/// y anillos pulsantes. Diseño minimalista acorde a la paleta brand.
+/// Shows a lock over a circular gradient with a floating effect
+/// and pulsing rings. Minimalist design matching the brand palette.
 class AuthIllustration extends StatefulWidget {
   const AuthIllustration({super.key});
 
@@ -69,7 +69,6 @@ class _AuthIllustrationState extends State<AuthIllustration>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Anillo exterior pulsante
                 Container(
                   width: 130,
                   height: 130,
@@ -78,7 +77,6 @@ class _AuthIllustrationState extends State<AuthIllustration>
                     color: AppColors.brand.withValues(alpha: glowOpacity),
                   ),
                 ),
-                // Anillo intermedio
                 Container(
                   width: 108,
                   height: 108,
@@ -89,7 +87,6 @@ class _AuthIllustrationState extends State<AuthIllustration>
                     ),
                   ),
                 ),
-                // Círculo principal con gradiente
                 Container(
                   width: 86,
                   height: 86,
@@ -113,7 +110,6 @@ class _AuthIllustrationState extends State<AuthIllustration>
                     ],
                   ),
                 ),
-                // Ícono de candado
                 const Icon(Icons.lock_rounded, size: 34, color: Colors.white),
               ],
             ),

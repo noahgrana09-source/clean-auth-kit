@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Campo de texto diseñado para simular la estética nativa de iOS,
-/// construido sobre un [TextFormField] de Material.
+/// Text field designed to mimic native iOS aesthetics,
+/// built on top of a Material [TextFormField].
 ///
-/// **¿Por qué existe este widget?**
-/// El SDK de Flutter tiene ciertas limitaciones con los componentes de Cupertino:
-/// 1. [CupertinoTextField] no implementa [FormField], por lo que no soporta validación nativa (`validator`).
-/// 2. [CupertinoTextFormFieldRow] sí soporta validación, pero no expone la propiedad `suffix` (ej. botón de ver contraseña).
+/// **Why does this widget exist?**
+/// The Flutter SDK has certain limitations with Cupertino components:
+/// 1. [CupertinoTextField] doesn't implement [FormField], so it doesn't support native validation (`validator`).
+/// 2. [CupertinoTextFormFieldRow] does support validation, but doesn't expose a `suffix` property (e.g. a show-password button).
 ///
-/// Para solucionar esto, este widget utiliza un campo de Material configurado
-/// visualmente para lucir idéntico a un campo moderno de iOS.
+/// To work around this, this widget uses a Material field styled
+/// to look identical to a modern iOS field.
 class AppCupertinoTextField extends StatelessWidget {
   final String? hint;
   final TextEditingController? controller;
@@ -22,6 +22,7 @@ class AppCupertinoTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool autofocus;
   final FocusNode? focusNode;
+  final Iterable<String>? autofillHints;
 
   const AppCupertinoTextField({
     super.key,
@@ -36,6 +37,7 @@ class AppCupertinoTextField extends StatelessWidget {
     this.onChanged,
     this.autofocus = false,
     this.focusNode,
+    this.autofillHints,
   });
 
   @override
@@ -51,6 +53,7 @@ class AppCupertinoTextField extends StatelessWidget {
       autofocus: autofocus,
       validator: validator,
       focusNode: focusNode,
+      autofillHints: autofillHints,
       style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
       decoration: InputDecoration(
         hintText: hint,

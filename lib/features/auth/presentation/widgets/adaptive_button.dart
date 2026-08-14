@@ -5,22 +5,22 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
 
-/// Botón primario adaptativo que renderiza [CupertinoButton] en iOS
-/// y [ElevatedButton] en Android/Web.
+/// Adaptive primary button that renders [CupertinoButton] on iOS
+/// and [ElevatedButton] on Android/Web.
 ///
-/// Incluye soporte para estado de carga con un indicador de progreso
-/// nativo de cada plataforma. Usa el color de marca morado [AppColors.brand].
+/// Includes loading-state support with each platform's native
+/// progress indicator. Uses the purple brand color [AppColors.brand].
 class AdaptiveButton extends StatelessWidget {
-  /// Texto mostrado en el botón.
+  /// Text shown on the button.
   final String text;
 
-  /// Callback al presionar el botón. Si es `null`, el botón se deshabilita.
+  /// Callback on button press. If `null`, the button is disabled.
   final VoidCallback? onPressed;
 
-  /// Si `true`, muestra un indicador de carga y deshabilita la interacción.
+  /// If `true`, shows a loading indicator and disables interaction.
   final bool isLoading;
 
-  /// Crea un [AdaptiveButton] adaptativo con color de marca.
+  /// Creates an [AdaptiveButton] with the brand color.
   const AdaptiveButton({
     super.key,
     required this.text,
@@ -36,7 +36,7 @@ class AdaptiveButton extends StatelessWidget {
     return _buildMaterialButton();
   }
 
-  /// Construye el botón estilo Cupertino (iOS/macOS).
+  /// Builds the Cupertino-style button (iOS/macOS).
   Widget _buildCupertinoButton() {
     return SizedBox(
       width: double.infinity,
@@ -56,7 +56,7 @@ class AdaptiveButton extends StatelessWidget {
     );
   }
 
-  /// Construye el botón estilo Material (Android/Web).
+  /// Builds the Material-style button (Android/Web).
   Widget _buildMaterialButton() {
     return SizedBox(
       width: double.infinity,

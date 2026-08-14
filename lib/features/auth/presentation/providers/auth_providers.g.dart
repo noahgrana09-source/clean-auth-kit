@@ -460,31 +460,31 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
-/// Si `true`, las pantallas de auth muestran la ilustración propia (el
-/// candado animado) en vez de la animación de Rive.
+/// If `true`, the auth screens show the app's own illustration (the
+/// animated lock) instead of the Rive animation.
 ///
-/// Se define en tiempo de compilación. Por defecto es `false` (se usa
-/// Rive); para probar la ilustración propia:
+/// Set at compile time. Defaults to `false` (Rive is used); to try the
+/// app's own illustration:
 /// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
 
 @ProviderFor(useAppIllustration)
 final useAppIllustrationProvider = UseAppIllustrationProvider._();
 
-/// Si `true`, las pantallas de auth muestran la ilustración propia (el
-/// candado animado) en vez de la animación de Rive.
+/// If `true`, the auth screens show the app's own illustration (the
+/// animated lock) instead of the Rive animation.
 ///
-/// Se define en tiempo de compilación. Por defecto es `false` (se usa
-/// Rive); para probar la ilustración propia:
+/// Set at compile time. Defaults to `false` (Rive is used); to try the
+/// app's own illustration:
 /// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
 
 final class UseAppIllustrationProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  /// Si `true`, las pantallas de auth muestran la ilustración propia (el
-  /// candado animado) en vez de la animación de Rive.
+  /// If `true`, the auth screens show the app's own illustration (the
+  /// animated lock) instead of the Rive animation.
   ///
-  /// Se define en tiempo de compilación. Por defecto es `false` (se usa
-  /// Rive); para probar la ilustración propia:
+  /// Set at compile time. Defaults to `false` (Rive is used); to try the
+  /// app's own illustration:
   /// `flutter run --dart-define=USE_APP_ILLUSTRATION=true`
   UseAppIllustrationProvider._()
     : super(

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
 
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';

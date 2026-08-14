@@ -1,0 +1,67 @@
+{
+  "@@locale": "es",
+
+  "emailRequired": "El correo electrónico es obligatorio",
+
+  "passwordRequired": "La contraseña es obligatoria",
+
+  "emailHint": "Correo electrónico",
+
+  "passwordHint": "Contraseña",
+
+  "orDivider": "o",
+
+  "signIn": "Iniciar sesión",
+
+  "continueWithGoogle": "Continuar con Google",
+
+  "loginWelcomeTitle": "Bienvenido",
+
+  "loginWelcomeSubtitle": "Inicia sesión para continuar",
+
+  "invalidCredentials": "Usuario o contraseña incorrectos",
+
+  "signInWithGoogle": "Iniciar sesión con Google",
+
+  "noAccountPrompt": "¿No tienes cuenta? ",
+
+  "registerLink": "Regístrate",
+
+  "createAccountTitle": "Crear cuenta",
+
+  "registerSubtitle": "Regístrate para comenzar",
+
+  "nameRequired": "El nombre es obligatorio",
+
+  "invalidEmail": "Ingresa un correo electrónico válido",
+
+  "passwordTooShort": "Mínimo 8 caracteres",
+
+  "passwordNeedsUppercase": "Debe contener al menos una mayúscula",
+
+  "passwordNeedsNumber": "Debe contener al menos un número",
+
+  "passwordNeedsSpecialChar": "Debe contener al menos un carácter especial",
+
+  "confirmPasswordRequired": "Confirma tu contraseña",
+
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+
+  "nameHint": "Nombre completo",
+
+  "confirmPasswordHint": "Confirmar contraseña",
+
+  "signUpWithGoogle": "Registrarse con Google",
+
+  "haveAccountPrompt": "¿Ya tienes cuenta? ",
+
+  "homeTitle": "Inicio",
+
+  "welcomeUser": "Bienvenido, {name}",
+
+  "defaultUserName": "usuario",
+
+  "signOut": "Cerrar sesión",
+
+  "animationLoadError": "No se pudo cargar la animación"
+}

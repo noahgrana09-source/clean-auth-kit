@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:product_searcher/features/auth/data/models/user_model.dart';
-import 'package:product_searcher/features/auth/domain/entities/user_entity.dart';
+import 'package:clean_auth_kit/features/auth/data/models/user_model.dart';
+import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
 
 import '../auth_data_mocks.dart';
 

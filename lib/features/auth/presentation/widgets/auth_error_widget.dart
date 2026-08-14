@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/platform_utils.dart';
 
-/// Widget adaptativo para mostrar errores de autenticación.
+/// Adaptive widget for displaying authentication errors.
 ///
-/// Se muestra con una animación suave de aparición/desaparición.
-/// Usa colores de error del [ColorScheme] del tema actual y se adapta
-/// a la plataforma (Cupertino en iOS, Material en Android).
+/// Shown with a smooth appear/disappear animation. Uses the current
+/// theme's [ColorScheme] error colors and adapts to the platform
+/// (Cupertino on iOS, Material on Android).
 class AuthErrorWidget extends StatelessWidget {
-  /// Mensaje de error a mostrar. Si es `null` o vacío, el widget
-  /// se oculta con una animación.
+  /// Error message to display. If `null` or empty, the widget hides
+  /// itself with an animation.
   final String? message;
 
-  /// Crea un [AuthErrorWidget] con un [message] opcional.
+  /// Creates an [AuthErrorWidget] with an optional [message].
   const AuthErrorWidget({super.key, this.message});
 
   @override
@@ -39,7 +39,7 @@ class AuthErrorWidget extends StatelessWidget {
     );
   }
 
-  /// Construye el contenido del error.
+  /// Builds the error content.
   Widget _buildErrorContent(BuildContext context) {
     final errorColor = Theme.of(context).colorScheme.error;
 

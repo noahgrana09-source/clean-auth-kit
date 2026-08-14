@@ -24,18 +24,10 @@ class DefaultFirebaseOptions {
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        return windows;
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
+          'DefaultFirebaseOptions are not supported for this platform. '
+          'This app only targets Android, iOS, and Web.',
         );
     }
   }
@@ -71,26 +63,4 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.productSearcher',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDJoX1NKZL43Zvs3nxgfAsk9hHgik_-k3M',
-    appId: '1:782341238024:ios:566cb617d23a9d55c590bd',
-    messagingSenderId: '782341238024',
-    projectId: 'product-searcher-5e109',
-    storageBucket: 'product-searcher-5e109.firebasestorage.app',
-    androidClientId:
-        '782341238024-u5aitt0b322rsd2cgobole6sm9rgbb6g.apps.googleusercontent.com',
-    iosClientId:
-        '782341238024-q7k9mrj71sh3s85ehi3678cndi3n8g6s.apps.googleusercontent.com',
-    iosBundleId: 'com.example.productSearcher',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCgAmffbqWvboEQiN4b-vtKro6MPo1hWZM',
-    appId: '1:782341238024:web:92b43ed4e490f4bdc590bd',
-    messagingSenderId: '782341238024',
-    projectId: 'product-searcher-5e109',
-    authDomain: 'product-searcher-5e109.firebaseapp.com',
-    storageBucket: 'product-searcher-5e109.firebasestorage.app',
-    measurementId: 'G-WEQ0N6432F',
-  );
 }
