@@ -8,7 +8,7 @@ A production-grade authentication feature for Flutter, built with Clean Architec
 
 | Google Sign-In | Email login | Registration |
 |---|---|---|
-| <video src="assets/gifs/google_auth.mp4" controls muted loop playsinline width="260"></video> | <video src="assets/gifs/login.mp4" controls muted loop playsinline width="260"></video> | <video src="assets/gifs/register.mp4" controls muted loop playsinline width="260"></video> |
+| ![Google Sign-In](assets/gifs/google_auth.gif) | ![Email login](assets/gifs/login.gif) | ![Registration](assets/gifs/register.gif) |
 
 ## Table of contents
 
@@ -25,9 +25,9 @@ A production-grade authentication feature for Flutter, built with Clean Architec
 
 ## What this project is
 
-This started as a broader "product searcher" app idea and, over the course of development, narrowed down into what turned out to be the most interesting engineering problem in it: **authentication done right**. There's no product search here — the repository name is a leftover of that original scope. What remains is a focused, deeply-tested auth feature: sign up, sign in, Google Sign-In, session persistence, and everything that goes wrong around them in a real app (orphaned accounts, stale error state, cancelled OAuth flows, token refresh).
+Clean Auth Kit is an enterprise-grade authentication system, built as a self-contained Flutter feature meant to be dropped into any project that needs one: sign up, sign in, Google Sign-In, session persistence, and everything that goes wrong around them in a real app (orphaned accounts, stale error state, cancelled OAuth flows, token refresh). Point it at your own Firebase project and it's ready to use — see [Running the project](#running-the-project).
 
-It's meant to be read as a portfolio piece — a demonstration of how a single feature gets built when correctness and maintainability are the actual goal, not just "does it work once."
+It started out under a different name with a broader scope; that scope narrowed down to authentication, which is the only thing the current codebase implements.
 
 ## Architecture and domain entity
 
@@ -57,7 +57,7 @@ A `UserEntity` is created once, in Firestore, at sign-up/first Google sign-in, a
 A few decisions worth calling out specifically, since they're the parts most likely to matter to someone evaluating this code:
 
 - **Compensating-transaction rollback.** If writing the user's profile to Firestore fails right after Firebase Auth creates the account, the just-created Auth account is deleted to avoid an orphaned account with no profile. For Google Sign-In, this only happens if the sign-in *just* created the account (`isNewUser`) — an existing user is never deleted over a transient read/write failure.
-- **Typed failures with codes.** Every `Failure` carries a `code` (mirroring the originating Firebase error code where applicable), so the presentation layer can make precise UI decisions (e.g. "wrong password" vs. "network error") without string-matching error messages.
+- **Typed failures with codes, handled functionally.** Every `Failure` carries a `code` (mirroring the originating Firebase error code where applicable), so the presentation layer can make precise UI decisions (e.g. "wrong password" vs. "network error") without string-matching error messages. Failures are never thrown past the data layer — repository methods return `Either<Failure, T>` (via `dartz`), so every use case and notifier handles the failure/success branch explicitly instead of relying on try/catch control flow.
 - **Native autofill integration.** Correct `AutofillHints` per field (`username`+`email` combined on the login identifier field, `newPassword` on both password fields at registration, `newUsername`+`email` on the registration email field) so the OS password manager actually offers to save credentials.
 - **Full i18n**, using Flutter's official `flutter_localizations` + ARB pipeline — not a hand-rolled string-switching helper.
 - **A Rive state machine wired to real app state**, not just decoration: the illustration reacts to password-field focus and fires success/failure triggers based on the actual `AuthState`.
@@ -131,7 +131,7 @@ Grab the latest `app-release.apk` from the [Releases](../../releases) page and s
 
 1. Clone the repo and run `flutter pub get`.
 2. Install the [FlutterFire CLI](https://firebase.google.com/docs/flutter/setup) and run `flutterfire configure` against your own Firebase project — this regenerates `lib/firebase_options.dart` and the platform config files (`google-services.json` / `GoogleService-Info.plist`) for your project. This repo's own Firebase project is not something you can configure into your own build.
-3. Deploy `firestore.rules` to your project: `firebase deploy --only firestore:rules`.
+3. Deploy `firestore.rules` to your project: `firebase deploy --only firestore:rules`. This deploys the rules already defined in this repo (owner-scoped: each user may only read/create their own document). If you want different access rules, either edit `firestore.rules` before deploying, or write your own directly in your Firebase console.
 4. Run the app: `flutter run` (pick a device — Android, iOS, or Chrome).
 
 ## Testing
@@ -144,7 +144,7 @@ Coverage focuses on the domain and data layers (use cases, repository, remote da
 
 ## Extra commands
 
-- **Toggle the Rive illustration at build time:**
+- **Toggle the Rive illustration at build time.** By default, the login/register screens show the Rive-driven robot illustration. There's a second, hand-built illustration (`AuthIllustration`) — a purely Dart/Flutter `AnimatedBuilder`-based animation, no external asset or runtime — kept as a lighter-weight alternative that doesn't depend on the `rive` package. Switch to it with:
   ```
   flutter run --dart-define=USE_APP_ILLUSTRATION=true
   ```
@@ -156,9 +156,7 @@ Coverage focuses on the domain and data layers (use cases, repository, remote da
 
 ## Known limitations
 
-Said plainly, since a portfolio project is more useful when its gaps are visible rather than discovered:
-
-- **No widget/integration tests** — coverage stops at the domain and data layers; screens and widgets aren't tested.
+- **No widget/integration tests** — coverage stops at the domain and data layers. Testing effort went into the layers where the actual business logic and error-handling decisions live (use cases, repository, data source); screens and widgets are comparatively low-risk platform-rendering code and aren't covered yet.
 - **iOS has never been built on real hardware.** Development happened entirely on Linux; the iOS configuration exists (`firebase_options.dart`, `Info.plist`) but has only been reasoned about, never run.
 - **Flutter Web has real, known performance overhead** on Firebase Auth/Firestore calls (the JS-interop SDK layer is slower than the native SDKs Android/iOS use) — the web build is a convenience demo, not the intended primary experience.
 
