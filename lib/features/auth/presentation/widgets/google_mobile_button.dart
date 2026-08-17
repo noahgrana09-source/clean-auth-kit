@@ -14,12 +14,14 @@ const String _googleLogoSvg = '''
 </svg>
 ''';
 
-/// "Continue with Google" button with the official Google logo.
+/// "Continue with Google" button with the official Google logo, used on
+/// Android/iOS ([GoogleSignIn.supportsAuthenticate] platforms). Web uses
+/// Google's own rendered button instead — see [GoogleAuthButton].
 ///
 /// Follows the Google Sign-In branding guidelines: white background
 /// on light theme, dark background on dark theme, G logo on the
 /// left, centered text.
-class GoogleSignInButton extends StatelessWidget {
+class GoogleMobileButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
 
@@ -27,7 +29,7 @@ class GoogleSignInButton extends StatelessWidget {
   /// when omitted.
   final String? text;
 
-  const GoogleSignInButton({
+  const GoogleMobileButton({
     super.key,
     this.onPressed,
     this.isLoading = false,

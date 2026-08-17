@@ -1,10 +1,13 @@
+import 'package:dartz/dartz.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:clean_auth_kit/core/error/failures.dart';
 import 'package:clean_auth_kit/features/auth/domain/entities/user_entity.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/watch_google_sign_in_events_usecase.dart';
 import 'package:clean_auth_kit/features/auth/presentation/providers/auth_providers.dart';
 import 'package:clean_auth_kit/features/auth/presentation/providers/auth_state.dart';
 import '../../../../core/usecases/usecase.dart';
@@ -23,6 +26,7 @@ class AuthNotifier extends _$AuthNotifier {
   late final SignUpWithEmailUseCase _signUpWithEmail;
   late final SignOutUseCase _signOut;
   late final GetCurrentUserUseCase _getCurrentUser;
+  late final WatchGoogleSignInEventsUseCase _watchGoogleSignInEvents;
 
   @override
   AuthState build() {
@@ -31,6 +35,15 @@ class AuthNotifier extends _$AuthNotifier {
     _signUpWithEmail = ref.watch(signUpWithEmailUseCaseProvider);
     _signOut = ref.watch(signOutUseCaseProvider);
     _getCurrentUser = ref.watch(getCurrentUserUseCaseProvider);
+    _watchGoogleSignInEvents = ref.watch(watchGoogleSignInEventsUseCaseProvider);
+
+    // On web, the Google button is rendered and driven entirely by
+    // Google's own JS — there's no onPressed of ours to call
+    // signInWithGoogle from, so the result only ever arrives here.
+    final subscription = _watchGoogleSignInEvents(
+      const NoParams(),
+    ).listen(_applyGoogleSignInResult);
+    ref.onDispose(subscription.cancel);
 
     final UserEntity? user = _getCurrentUser();
     if (user != null) {
@@ -43,6 +56,14 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signInWithGoogle() async {
     state = const AuthState.loading();
     final result = await _signInWithGoogle(const NoParams());
+    _applyGoogleSignInResult(result);
+  }
+
+  /// Shared by [signInWithGoogle] and the [_watchGoogleSignInEvents]
+  /// subscription set up in [build] — both report a Google sign-in
+  /// outcome the same way, they just differ in how the sign-in itself
+  /// was triggered.
+  void _applyGoogleSignInResult(Either<Failure, UserEntity> result) {
     result.fold((failure) {
       if (failure.code == 'canceled') {
         state = const AuthState.unauthenticated();

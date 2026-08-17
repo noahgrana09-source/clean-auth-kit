@@ -10,6 +10,7 @@ import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_email_
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:clean_auth_kit/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
+import 'package:clean_auth_kit/features/auth/domain/usecases/watch_google_sign_in_events_usecase.dart';
 
 part 'auth_providers.g.dart';
 
@@ -65,6 +66,10 @@ SignOutUseCase signOutUseCase(Ref ref) =>
 @riverpod
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
     GetCurrentUserUseCase(ref.watch(authRepositoryProvider));
+
+@riverpod
+WatchGoogleSignInEventsUseCase watchGoogleSignInEventsUseCase(Ref ref) =>
+    WatchGoogleSignInEventsUseCase(ref.watch(authRepositoryProvider));
 
 // ---------------------------------------------------------------------------
 // UI configuration

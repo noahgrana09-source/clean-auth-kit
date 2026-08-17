@@ -17,6 +17,12 @@ dependencies:
   # Google Sign-In (v7.2.0 - new reactive model with GoogleSignIn.instance)
   google_sign_in: 7.2.0
 
+  # Web-only renderButton() for Google Sign-In, imported directly by
+  # GoogleAuthButton (behind a conditional export) — an explicit
+  # dependency here since we reference it directly, not just through
+  # google_sign_in's own transitive resolution.
+  google_sign_in_web: ^1.1.3
+
   # SVG rendering (used for the official Google logo on the button)
   flutter_svg: ^2.0.10+1
 

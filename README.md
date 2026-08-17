@@ -93,6 +93,10 @@ test/features/auth/
 ├── domain/usecases/           # One test file per use case
 └── data/                      # Repository and data source tests, with shared mock setups
 
+assets/
+├── rive/                      # robot_sign_in.riv, the state-machine-driven illustration
+└── gifs/                      # Demo clips embedded in this README
+
 android/, ios/, web/            # Platform shells (Android and iOS are the primary targets)
 firestore.rules, firebase.json  # Firestore security rules + Hosting config
 ```
@@ -134,6 +138,8 @@ Grab the latest `app-release.apk` from the [Releases](../../releases) page and s
 3. Deploy `firestore.rules` to your project: `firebase deploy --only firestore:rules`. This deploys the rules already defined in this repo (owner-scoped: each user may only read/create their own document). If you want different access rules, either edit `firestore.rules` before deploying, or write your own directly in your Firebase console.
 4. Run the app: `flutter run` (pick a device — Android, iOS, or Chrome).
 
+**Note on Google Sign-In in local web dev:** Google's OAuth client only allows requests from a fixed set of authorized origins. For Chrome via `flutter run -d chrome`, the dev server picks a random port every run, which won't match — pin it explicitly: `flutter run -d chrome --web-port=5000`. (With your own Firebase/Google Cloud project, authorize whatever port you choose to use instead.)
+
 ## Testing
 
 ```
@@ -159,6 +165,7 @@ Coverage focuses on the domain and data layers (use cases, repository, remote da
 - **No widget/integration tests** — coverage stops at the domain and data layers. Testing effort went into the layers where the actual business logic and error-handling decisions live (use cases, repository, data source); screens and widgets are comparatively low-risk platform-rendering code and aren't covered yet.
 - **iOS has never been built on real hardware.** Development happened entirely on Linux; the iOS configuration exists (`firebase_options.dart`, `Info.plist`) but has only been reasoned about, never run.
 - **Flutter Web has real, known performance overhead** on Firebase Auth/Firestore calls (the JS-interop SDK layer is slower than the native SDKs Android/iOS use) — the web build is a convenience demo, not the intended primary experience.
+- **The Google sign-in button looks different on web than on Android/iOS.** On mobile it's this app's own styled button (`GoogleMobileButton`); on web, Google's Identity Services requires rendering its own button (`GoogleAuthButton` picks between the two automatically) — its size and theme can be configured within Google's own presets, but not restyled to match the app's branding. Expected: this app was designed mobile-first, with the web build as a secondary convenience target.
 
 ## License
 

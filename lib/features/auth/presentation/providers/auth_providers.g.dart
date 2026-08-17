@@ -460,6 +460,57 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
+@ProviderFor(watchGoogleSignInEventsUseCase)
+final watchGoogleSignInEventsUseCaseProvider =
+    WatchGoogleSignInEventsUseCaseProvider._();
+
+final class WatchGoogleSignInEventsUseCaseProvider
+    extends
+        $FunctionalProvider<
+          WatchGoogleSignInEventsUseCase,
+          WatchGoogleSignInEventsUseCase,
+          WatchGoogleSignInEventsUseCase
+        >
+    with $Provider<WatchGoogleSignInEventsUseCase> {
+  WatchGoogleSignInEventsUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'watchGoogleSignInEventsUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$watchGoogleSignInEventsUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<WatchGoogleSignInEventsUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  WatchGoogleSignInEventsUseCase create(Ref ref) {
+    return watchGoogleSignInEventsUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(WatchGoogleSignInEventsUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<WatchGoogleSignInEventsUseCase>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$watchGoogleSignInEventsUseCaseHash() =>
+    r'3aabfe5bf3662e1bc28301d5ae0b57689b1cf236';
+
 /// If `true`, the auth screens show the app's own illustration (the
 /// animated lock) instead of the Rive animation.
 ///

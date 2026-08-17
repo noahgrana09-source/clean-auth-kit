@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,28 +25,55 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final userModel = await _remoteDataSource.signInWithGoogle();
       return Right(userModel.toEntity());
-    } on FirebaseAuthException catch (e) {
-      return Left(AuthFailure(code: e.code, message: e.message ?? ''));
-    } on GoogleSignInException catch (e) {
-      return Left(
-        GoogleSignInFailure(
-          code: e.code.name,
-          message: 'Error at Google Sign In ${e.code}',
-        ),
-      );
-    } on AuthDataSourceException catch (e) {
-      return Left(GoogleSignInFailure(code: e.code, message: e.message));
-    } on UserPersistenceException catch (e) {
-      return Left(UserPersistenceFailure(code: e.code, message: e.message));
-    } on FormatException catch (e) {
-      return Left(
-        GoogleSignInFailure(code: 'invalid-data', message: e.toString()),
-      );
-    } on Exception catch (e) {
-      return Left(
-        GoogleSignInFailure(code: 'unknown-error', message: e.toString()),
-      );
+    } catch (e) {
+      return Left(_mapGoogleSignInError(e));
     }
+  }
+
+  @override
+  Stream<Either<Failure, UserEntity>> get googleSignInEvents {
+    return _remoteDataSource.googleSignInEvents.transform(
+      StreamTransformer.fromHandlers(
+        handleData: (userModel, sink) =>
+            sink.add(Right(userModel.toEntity())),
+        handleError: (error, stackTrace, sink) =>
+            sink.add(Left(_mapGoogleSignInError(error))),
+      ),
+    );
+  }
+
+  /// Maps anything [AuthRemoteDataSource.signInWithGoogle] or
+  /// [AuthRemoteDataSource.googleSignInEvents] can throw to a [Failure].
+  /// Shared by both so the two Google sign-in entry points (the explicit
+  /// call and the web-rendered-button stream) report failures the same
+  /// way. Catches non-[Exception] throwables too (e.g. an [Error] from a
+  /// misconfigured platform SDK) so callers always get a [Failure] back
+  /// instead of an unhandled rejection that would leave the UI stuck in
+  /// a loading state forever.
+  Failure _mapGoogleSignInError(Object error) {
+    return switch (error) {
+      FirebaseAuthException e => AuthFailure(
+        code: e.code,
+        message: e.message ?? '',
+      ),
+      GoogleSignInException e => GoogleSignInFailure(
+        code: e.code.name,
+        message: 'Error at Google Sign In ${e.code}',
+      ),
+      AuthDataSourceException e => GoogleSignInFailure(
+        code: e.code,
+        message: e.message,
+      ),
+      UserPersistenceException e => UserPersistenceFailure(
+        code: e.code,
+        message: e.message,
+      ),
+      FormatException e => GoogleSignInFailure(
+        code: 'invalid-data',
+        message: e.toString(),
+      ),
+      _ => GoogleSignInFailure(code: 'unknown-error', message: error.toString()),
+    };
   }
 
   @override
@@ -65,6 +94,8 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FormatException catch (e) {
       return Left(ServerFailure(code: 'invalid-data', message: e.toString()));
     } on Exception catch (e) {
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
+    } catch (e) {
       return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }
@@ -92,6 +123,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure(code: 'invalid-data', message: e.toString()));
     } on Exception catch (e) {
       return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
+    } catch (e) {
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }
 
@@ -101,6 +134,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.signOut();
       return const Right(unit);
     } on Exception catch (e) {
+      return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
+    } catch (e) {
       return Left(ServerFailure(code: 'unknown-error', message: e.toString()));
     }
   }

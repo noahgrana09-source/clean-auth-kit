@@ -1,7 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:clean_auth_kit/features/auth/data/models/user_model.dart';
+
+/// OAuth Client ID for the "Web client (auto created by Google Service)"
+/// entry in Google Cloud Console. Unlike Android/iOS, the web platform
+/// has no native config file (google-services.json /
+/// GoogleService-Info.plist) for google_sign_in_web to read this from —
+/// it must be passed explicitly, or GoogleSignIn.initialize() fails on
+/// web with an Error (not an Exception) that no catch clause upstream
+/// is written to expect, leaving the caller's Future pending forever.
+const _webGoogleClientId =
+    '782341238024-ds3l96ve505jsd5b12adq88mrssr3rtm.apps.googleusercontent.com';
 
 /// Abstract interface for the authentication remote data source.
 ///
@@ -41,6 +52,14 @@ abstract class AuthRemoteDataSource {
   /// Uses Google Sign-In 7.2.0 with the new reactive API.
   /// Throws [Exception] if the sign-in is cancelled or fails.
   Future<UserModel> signInWithGoogle();
+
+  /// Emits a [UserModel] each time a Google sign-in completes outside of
+  /// [signInWithGoogle] — i.e. via the web-rendered Google button, whose
+  /// result only ever surfaces through [GoogleSignIn.authenticationEvents].
+  /// Emits a stream error (mapped by the repository, same as
+  /// [signInWithGoogle]'s thrown exceptions) if completing the sign-in
+  /// fails after the Google account was obtained.
+  Stream<UserModel> get googleSignInEvents;
 
   /// Signs in the user with email and password.
   ///
@@ -82,6 +101,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// The Google Sign-In instance.
   final GoogleSignIn _googleSignIn;
 
+  /// Whether [_initializeGoogleSignIn] has already run. A second real
+  /// call to [GoogleSignIn.initialize] throws `Bad state: init() has
+  /// already been called` on web — it is not safe to call more than
+  /// once, unlike what an earlier version of this comment assumed.
+  bool _googleSignInInitialized = false;
+
   AuthRemoteDataSourceImpl({
     required FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
@@ -90,25 +115,34 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
        _firestore = firestore,
        _googleSignIn = googleSignIn;
 
-  @override
-  Future<UserModel> signInWithGoogle() async {
-    // Initialize Google Sign-In (required before any usage in 7.2.0)
-    await _googleSignIn.initialize();
+  /// Initializes Google Sign-In. Required before *any* use of
+  /// [_googleSignIn] in 7.2.0 — not just [signInWithGoogle], [signOut]
+  /// needs it too. On web there's no native config file to read the
+  /// client ID from (see [_webGoogleClientId]); skipping this call on
+  /// web leaves the underlying JS client unusable, and calls to it
+  /// then hang indefinitely instead of failing. Passing a clientId on
+  /// Android/iOS would override the native config, so it's left null
+  /// there and the native SDK resolves it as before. Guarded to run at
+  /// most once per instance — see [_googleSignInInitialized].
+  Future<void> _initializeGoogleSignIn() async {
+    if (_googleSignInInitialized) return;
+    await _googleSignIn.initialize(
+      clientId: kIsWeb ? _webGoogleClientId : null,
+    );
+    _googleSignInInitialized = true;
+  }
 
-    // Start the Google Sign-In flow using authenticate() (NOT signIn())
-    // In 7.2.0, authenticate() returns GoogleSignInAccount directly
-    // and throws GoogleSignInException on failure/cancellation.
-    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-
-    // Obtain auth tokens from the Google account.
-    // In 7.2.0, authentication is a synchronous getter returning
-    // GoogleSignInAuthentication which only contains idToken.
+  /// Everything that happens once a [GoogleSignInAccount] has been
+  /// obtained, regardless of whether it came from [signInWithGoogle]'s
+  /// [GoogleSignIn.authenticate] call or from a sign-in event on
+  /// [googleSignInEvents]: exchange it for a Firebase credential, sign
+  /// in to Firebase, and persist the user's profile (rolling back the
+  /// just-created account if persistence fails).
+  Future<UserModel> _completeGoogleSignIn(
+    GoogleSignInAccount googleUser,
+  ) async {
     final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
-    // Create Firebase credential using the idToken.
-    // In Google Sign-In 7.2.0, accessToken is no longer part of
-    // GoogleSignInAuthentication — it lives in GoogleSignInClientAuthorization.
-    // Firebase Auth only requires idToken for credential creation.
     final OAuthCredential credential = GoogleAuthProvider.credential(
       idToken: googleAuth.idToken,
     );
@@ -139,6 +173,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
 
     return userModel;
+  }
+
+  @override
+  Future<UserModel> signInWithGoogle() async {
+    await _initializeGoogleSignIn();
+
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+    return _completeGoogleSignIn(googleUser);
+  }
+
+  @override
+  Stream<UserModel> get googleSignInEvents {
+    // Unlike signInWithGoogle/signOut, nothing else calls
+    // _initializeGoogleSignIn before this stream is subscribed to — on
+    // web specifically, this is the only path left that would ever
+    // trigger it, and the rendered Google button needs the client
+    // initialized to show anything at all (without it, it's stuck on
+    // Google's own "Getting ready" placeholder forever).
+    return Stream.fromFuture(_initializeGoogleSignIn()).asyncExpand(
+      (_) => _googleSignIn.authenticationEvents
+          .where((event) => event is GoogleSignInAuthenticationEventSignIn)
+          .cast<GoogleSignInAuthenticationEventSignIn>()
+          .asyncMap((event) => _completeGoogleSignIn(event.user)),
+    );
   }
 
   @override
@@ -204,6 +262,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() async {
+    await _initializeGoogleSignIn();
     await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
   }
 

@@ -13,7 +13,7 @@ import '../widgets/adaptive_button.dart';
 import '../widgets/adaptive_text_field.dart';
 import '../widgets/auth_error_widget.dart';
 import '../widgets/auth_header.dart';
-import '../widgets/google_sign_in_button.dart';
+import '../widgets/google_auth_button.dart';
 import '../widgets/loading_overlay.dart';
 import 'register_screen.dart';
 
@@ -252,7 +252,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _buildDivider(),
             const SizedBox(height: 16),
 
-            GoogleSignInButton(
+            GoogleAuthButton(
               isLoading: isLoading,
               onPressed: isLoading ? null : _signInWithGoogle,
               text: l10n.signInWithGoogle,

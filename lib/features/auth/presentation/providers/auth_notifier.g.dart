@@ -56,7 +56,7 @@ final class AuthNotifierProvider
   }
 }
 
-String _$authNotifierHash() => r'c28174fc4a45e464d7c10ed5d0418407161ba54f';
+String _$authNotifierHash() => r'1a7da5508db7d93b8dffae8aaabcaa9136660505';
 
 /// Manages the authentication state of the application.
 ///
